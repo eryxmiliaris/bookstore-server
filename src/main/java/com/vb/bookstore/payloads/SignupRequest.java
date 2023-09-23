@@ -1,7 +1,9 @@
 package com.vb.bookstore.payloads;
 
+import com.vb.bookstore.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,15 +14,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SignupRequest {
     @NotBlank
-    @Size(min = 3, max = 20)
+    @Size(min = 5, max = 45)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
     @Email
     private String email;
 
     @NotBlank
-    @Size(min = 6, max = 40)
+    @ValidPassword
     private String password;
 }
