@@ -1,6 +1,6 @@
 package com.vb.bookstore.entities;
 
-public enum ERole {
+public enum RoleEnum {
     ROLE_USER,
     ROLE_ADMIN
 }

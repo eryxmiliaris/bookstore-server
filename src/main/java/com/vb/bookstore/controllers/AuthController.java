@@ -1,13 +1,13 @@
 package com.vb.bookstore.controllers;
 
 
-import com.vb.bookstore.entities.ERole;
+import com.vb.bookstore.entities.RoleEnum;
 import com.vb.bookstore.entities.Role;
 import com.vb.bookstore.entities.User;
-import com.vb.bookstore.payloads.LoginRequest;
+import com.vb.bookstore.payloads.auth.LoginRequest;
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.SignupRequest;
-import com.vb.bookstore.payloads.UserDTO;
+import com.vb.bookstore.payloads.auth.SignupRequest;
+import com.vb.bookstore.payloads.auth.UserDTO;
 import com.vb.bookstore.repositories.RoleRepository;
 import com.vb.bookstore.repositories.UserRepository;
 import com.vb.bookstore.security.jwt.JwtUtil;
@@ -88,7 +88,7 @@ public class AuthController {
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
 
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+        Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
         roles.add(userRole);
 
