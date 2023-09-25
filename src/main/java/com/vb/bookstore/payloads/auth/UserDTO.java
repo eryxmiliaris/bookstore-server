@@ -1,4 +1,4 @@
-package com.vb.bookstore.payloads;
+package com.vb.bookstore.payloads.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

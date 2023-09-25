@@ -1,4 +1,4 @@
-package com.vb.bookstore.payloads;
+package com.vb.bookstore.payloads.auth;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;

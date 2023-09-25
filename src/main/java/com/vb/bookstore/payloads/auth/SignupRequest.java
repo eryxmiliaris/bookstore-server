@@ -1,4 +1,4 @@
-package com.vb.bookstore.payloads;
+package com.vb.bookstore.payloads.auth;
 
 import com.vb.bookstore.validation.ValidPassword;
 import jakarta.validation.constraints.Email;
