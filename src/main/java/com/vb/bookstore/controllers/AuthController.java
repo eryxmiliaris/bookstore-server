@@ -1,6 +1,5 @@
 package com.vb.bookstore.controllers;
 
-
 import com.vb.bookstore.entities.RoleEnum;
 import com.vb.bookstore.entities.Role;
 import com.vb.bookstore.entities.User;
@@ -79,11 +78,11 @@ public class AuthController {
             SignupRequest signUpRequest
     ) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Username is already taken!"));
+            return new ResponseEntity<>(new MessageResponse(false, "Error: Username is already taken!"), HttpStatus.CONFLICT);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use!"));
+            return new ResponseEntity<>(new MessageResponse(false, "Error: Email is already in use!"), HttpStatus.CONFLICT);
         }
 
         // Create new user's account
@@ -98,7 +97,8 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
+        return ResponseEntity.ok()
+                .body(new MessageResponse(true, "User registered successfully!"));
 
     }
 
@@ -107,7 +107,7 @@ public class AuthController {
         ResponseCookie cookie = jwtUtil.getCleanJwtCookie();
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, cookie.toString())
-                .body(new MessageResponse("You've been signed out!"));
+                .body(new MessageResponse(true, "You've been signed out!"));
     }
 
     @GetMapping("/user")
@@ -124,16 +124,20 @@ public class AuthController {
                 .body(userDTO);
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<MessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return errors;
+        MessageResponse messageResponse = new MessageResponse();
+        messageResponse.setSuccess(false);
+        messageResponse.setMessage("Validation failed");
+        messageResponse.setErrors(errors);
+        return ResponseEntity.badRequest()
+                .body(messageResponse);
     }
 }
 
