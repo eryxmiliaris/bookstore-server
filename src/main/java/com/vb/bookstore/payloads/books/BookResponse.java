@@ -9,6 +9,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BooksResponse {
-    private List<BookDTO> content;
+public class BookResponse {
+    private Long id;
+    private String title;
+    private String author;
+    private List<String> bookTypes;
+    private String coverImageUrl;
 }
