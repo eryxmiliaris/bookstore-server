@@ -1,7 +1,7 @@
 -- Roles
 INSERT INTO roles(name) VALUES('ROLE_USER');
 INSERT INTO roles(name) VALUES('ROLE_ADMIN');
--- Default user and admin
+-- Default users (login/password: [user/user, admin/admin])
 INSERT INTO users(email, password, username) VALUES ('admin@mail.com', '$2a$12$W5KqZpjA9eFsN0IfpAGcwuSEstYQlEyiDSx4p5byMp1/sL1S3rcqW', 'admin');
 INSERT INTO users(email, password, username) VALUES ('user@mail.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'user');
 -- Set roles to users
@@ -84,28 +84,36 @@ INSERT INTO `bookstore`.`category_books` (`book_id`, `category_id`) VALUES
 INSERT INTO `bookstore`.`paper_books`
 (`cover_image_url`, `cover_type`, `is_available`, `isbn`, `num_of_pages`, `price`, `publisher`, `book_id`)
 VALUES
-('', 'HARDCOVER', true, '9781982127802', 300, 25.99, 'Publisher A', 1),
-('', 'PAPERBACK', true, '9781982127819', 400, 15.99, 'Publisher B', 2),
-('', 'HARDCOVER', true, '9781982127826', 350, 28.99, 'Publisher A', 3),
-('', 'PAPERBACK', true, '9781982127871', 350, 18.99, 'Publisher B', 8),
-('', 'HARDCOVER', true, '9781982127888', 320, 29.99, 'Publisher A', 9),
-('', 'PAPERBACK', true, '9781982127918', 480, 20.99, 'Publisher B', 12),
-('', 'PAPERBACK', true, '9781982127932', 430, 19.99, 'Publisher B', 14),
-('', 'PAPERBACK', true, '9781982127949', 250, 12.99, 'Publisher B', 1),
-('', 'HARDCOVER', true, '9781982127956', 320, 29.99, 'Publisher A', 2);
+('', 'HARDCOVER', true, '9781982127802', 300, 25.99, 'Penguin Random House', 1),
+('', 'PAPERBACK', true, '9781982127819', 400, 15.99, 'Scholastic', 2),
+('', 'HARDCOVER', true, '9781982127826', 350, 28.99, 'HarperCollins', 3),
+('', 'PAPERBACK', true, '9781982127871', 350, 18.99, 'Simon & Schuster', 8),
+('', 'HARDCOVER', true, '9781982127888', 320, 29.99, 'Penguin Random House', 9),
+('', 'PAPERBACK', true, '9781982127918', 480, 20.99, 'Scholastic', 12),
+('', 'PAPERBACK', true, '9781982127932', 430, 19.99, 'Scholastic', 14),
+('', 'PAPERBACK', true, '9781982127949', 250, 12.99, 'Simon & Schuster', 4),
+('', 'HARDCOVER', true, '9781982127956', 320, 29.99, 'HarperCollins', 5);
 -- Initial data for ebooks
-INSERT INTO ebooks
-(book_id, cover_image_url, price, publisher, num_of_pages, download_link)
+INSERT INTO `bookstore`.`ebooks`
+(`book_id`, `cover_image_url`, `price`, `publisher`, `num_of_pages`, `download_link`)
 VALUES
-(1, '', 9.99, 'Publisher A', 300, ''),
-(2, '', 8.49, 'Publisher B', 400, ''),
-(3, '', 7.99, 'Publisher C', 250, ''),
-(4, '', 6.99, 'Publisher D', 350, '');
+(1, '', 9.99, 'Penguin Random House', 300, ''),
+(2, '', 8.49, 'Scholastic', 400, ''),
+(3, '', 7.99, 'HarperCollins', 250, ''),
+(4, '', 6.99, 'Simon & Schuster', 350, ''),
+(6, '', 4.99, 'HarperCollins', 200, ''),
+(13, '', 10.99, 'HarperCollins', 380, ''),
+(5, '', 5.99, 'Penguin Random House', 420, '');
 -- Initial data for audiobooks
-INSERT INTO audio_books
-(book_id, cover_image_url, price, publisher, duration_seconds, narrator, download_link)
+INSERT INTO `bookstore`.`audio_books`
+(`book_id`, `cover_image_url`, `price`, `publisher`, `duration_seconds`, `narrator`, `download_link`)
 VALUES
-(1, '', 19.99, 'Publisher A', 7200, 'Narrator X', ''),
-(2, '', 18.49, 'Publisher B', 8400, 'Narrator Y', ''),
-(3, '', 17.99, 'Publisher C', 6000, 'Narrator Z', ''),
-(4, '', 16.99, 'Publisher D', 7800, 'Narrator W', '');
+(1, '', 19.99, 'Penguin Random House', 7200, 'John Smith', ''),
+(2, '', 18.49, 'Scholastic', 8400, 'Emily Johnson', ''),
+(3, '', 17.99, 'HarperCollins', 6000, 'Michael Williams', ''),
+(4, '', 16.99, 'Simon & Schuster', 7800, 'Sarah Davis', ''),
+(7, '', 19.99, 'Simon & Schuster', 8300, 'Sarah Davis', ''),
+(10, '', 14.49, 'ABC Books', 7200, 'Laura Johnson', ''),
+(11, '', 12.99, 'XYZ Publishing', 9000, 'Michael Clark', ''),
+(5, '', 15.99, 'Penguin Random House', 6600, 'David Miller', '');
+

@@ -78,11 +78,11 @@ public class AuthController {
             SignupRequest signUpRequest
     ) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
-            return new ResponseEntity<>(new MessageResponse(false, "Error: Username is already taken!"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageResponse(false, "Username is already taken!"), HttpStatus.CONFLICT);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return new ResponseEntity<>(new MessageResponse(false, "Error: Email is already in use!"), HttpStatus.CONFLICT);
+            return new ResponseEntity<>(new MessageResponse(false, "Email is already in use!"), HttpStatus.CONFLICT);
         }
 
         // Create new user's account
@@ -91,7 +91,7 @@ public class AuthController {
 
         Set<Role> roles = new HashSet<>();
         Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
-                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                .orElseThrow(() -> new RuntimeException("Role is not found."));
         roles.add(userRole);
 
         user.setRoles(roles);
