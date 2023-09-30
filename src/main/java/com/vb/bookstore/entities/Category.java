@@ -16,12 +16,12 @@ import java.util.Set;
 @Table(name = "categories", uniqueConstraints = {
         @UniqueConstraint(columnNames = "categoryName")
 })
-public class BookCategory {
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "bookCategories")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "categories")
     private Set<Book> books;
 
     @NotBlank

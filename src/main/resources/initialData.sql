@@ -65,17 +65,15 @@ INSERT INTO `bookstore`.`category_books` (`book_id`, `category_id`) VALUES
 (6, 3),  -- Horror (Song of Susannah)
 (7, 2),  -- Fantasy (The Dark Tower)
 (7, 3),  -- Horror (The Dark Tower)
-(8, 2);  -- Fantasy (The Wind Through the Keyhole)
+(8, 2),  -- Fantasy (The Wind Through the Keyhole)
 -- Books by J.K. Rowling
-INSERT INTO `bookstore`.`category_books` (`book_id`, `category_id`) VALUES
 (9, 2),  -- Fantasy (Harry Potter and the Philosopher's Stone)
 (9, 6),  -- Romance (Harry Potter and the Philosopher's Stone)
 (10, 2), -- Fantasy (Harry Potter and the Chamber of Secrets)
 (10, 6), -- Romance (Harry Potter and the Chamber of Secrets)
 (11, 2), -- Fantasy (Harry Potter and the Prisoner of Azkaban)
-(11, 6); -- Romance (Harry Potter and the Prisoner of Azkaban)
+(11, 6), -- Romance (Harry Potter and the Prisoner of Azkaban)
 -- Books by Terry Pratchett
-INSERT INTO `bookstore`.`category_books` (`book_id`, `category_id`) VALUES
 (12, 2), -- Fantasy (The Color of Magic)
 (13, 2), -- Fantasy (Mort)
 (14, 2), -- Fantasy (Guards! Guards!)

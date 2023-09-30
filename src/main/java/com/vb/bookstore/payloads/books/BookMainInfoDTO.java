@@ -9,10 +9,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookResponse {
-    private List<BookMainInfoDTO> content;
-    private Integer pageNumber;
-    private Integer pageSize;
-    private Long totalElements;
-    private Integer totalPages;
+public class BookMainInfoDTO {
+    private Long id;
+    private String title;
+    private String author;
+    private List<String> bookTypes;
+    private String coverImageUrl;
 }

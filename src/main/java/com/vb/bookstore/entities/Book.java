@@ -1,6 +1,5 @@
 package com.vb.bookstore.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
@@ -34,7 +33,7 @@ public class Book {
             name = "category_books",
             joinColumns = @JoinColumn(name = "book_id"),
             inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<BookCategory> bookCategories;
+    private Set<Category> categories;
 
 
     @NotBlank
