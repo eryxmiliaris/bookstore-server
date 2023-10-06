@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class BookCategoryDTO {
+public class CategoryDTO {
     private Long id;
     private String categoryName;
 }

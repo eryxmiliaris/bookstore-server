@@ -18,7 +18,7 @@ public class EBook {
     @Column(name = "book_id")
     private Long id;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "book_id")
     private Book book;

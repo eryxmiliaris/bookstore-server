@@ -26,7 +26,7 @@ public class Book {
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn
-    private EBook eBook;
+    private EBook ebook;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 public class PaperBook {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "paper_book_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
