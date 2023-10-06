@@ -26,14 +26,10 @@ public class BookController {
             @RequestParam(name = "priceStart", required = false) String priceStart,
             @RequestParam(name = "priceEnd", required = false) String priceEnd,
             @RequestParam(name = "category", required = false) String[] categories,
-            @RequestParam(name = "bookType", required = false) String[] bookTypes
+            @RequestParam(name = "bookType", required = false) String[] bookTypes,
+            @RequestParam(name = "bookTitle", required = false) String bookTitle
     ) {
-        BookResponse bookResponse;
-        if ((priceStart != null && priceEnd != null) || categories != null || bookTypes != null) {
-            bookResponse = bookService.getBooksWithFilters(pageNumber, pageSize, sortBy, sortOrder, priceStart, priceEnd, categories, bookTypes);
-        } else {
-            bookResponse = bookService.getAllBooks(pageNumber, pageSize, sortBy, sortOrder);
-        }
+        BookResponse bookResponse = bookService.getBooksWithFilters(pageNumber, pageSize, sortBy, sortOrder, priceStart, priceEnd, categories, bookTypes, bookTitle);
 
         return new ResponseEntity<>(bookResponse, HttpStatus.FOUND);
     }

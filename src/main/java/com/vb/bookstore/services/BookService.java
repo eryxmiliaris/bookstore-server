@@ -14,6 +14,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -22,22 +23,6 @@ import java.util.stream.Stream;
 public class BookService {
     private final BookRepository bookRepository;
     private final ModelMapper modelMapper;
-
-    public BookResponse getAllBooks(Integer pageNumber, Integer pageSize, String sortBy, String sortOrder) {
-        Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
-                : Sort.by(sortBy).descending();
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
-        Page<Book> pageBooks = bookRepository.findAll(pageDetails);
-        List<BookMainInfoDTO> dtos = bookStreamToBookDtoList(pageBooks.stream());
-        BookResponse bookResponse = new BookResponse();
-        bookResponse.setContent(dtos);
-        bookResponse.setPageNumber(pageBooks.getNumber());
-        bookResponse.setPageSize(pageBooks.getSize());
-        bookResponse.setTotalPages(pageBooks.getTotalPages());
-        bookResponse.setTotalElements(pageBooks.getTotalElements());
-
-        return bookResponse;
-    }
 
     public BookDTO getBookById(Long id) {
         Book book = bookRepository.findById(id)
@@ -57,86 +42,75 @@ public class BookService {
             String priceStart,
             String priceEnd,
             String[] categories,
-            String[] bookTypes
+            String[] bookTypes,
+            String bookTitle
     ) {
-        List<Book> books;
         Sort sortByAndOrder = sortOrder.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
                 : Sort.by(sortBy).descending();
+        Pageable pageDetails = PageRequest.of(pageNumber, pageSize, sortByAndOrder);
+
+        Boolean hasCategories = categories != null;
+        List<String> categoriesList = null;
         if (categories != null) {
-            books = bookRepository.findByCategories_CategoryNameIn(List.of(categories), sortByAndOrder);
-        } else {
-            books = bookRepository.findAll(sortByAndOrder);
+            categoriesList = Arrays.asList(categories);
         }
 
-        boolean paperBook = false;
-        boolean ebook = false;
-        boolean audiobook = false;
-        if (bookTypes == null) {
-            paperBook = true;
-            ebook = true;
-            audiobook = true;
-        } else {
-            for (String s : bookTypes) {
-                switch (s) {
-                    case "Paper book" -> paperBook = true;
-                    case "Ebook" -> ebook = true;
-                    case "Audio book" -> audiobook = true;
-                    default -> {
-                    }
-                }
+        Double priceStartDouble = priceStart == null ? 0.0 : Double.parseDouble(priceStart);
+        Double priceEndDouble = priceEnd == null ? 100000.0 : Double.parseDouble(priceEnd);
+        Double priceStartPB = priceStartDouble;
+        Double priceEndPB = priceEndDouble;
+        Double priceStartEB = priceStartDouble;
+        Double priceEndEB = priceEndDouble;
+        Double priceStartAB = priceStartDouble;
+        Double priceEndAB = priceEndDouble;
+        if (bookTypes != null) {
+            List<String> bookTypesList = Arrays.asList(bookTypes);
+            if (bookTypesList.contains("Paper book")) {
+                priceStartPB = priceStartDouble;
+                priceEndPB = priceEndDouble;
+            } else {
+                priceStartPB = null;
+                priceEndPB = null;
+            }
+
+            if (bookTypesList.contains("Ebook")) {
+                priceStartEB = priceStartDouble;
+                priceEndEB = priceEndDouble;
+            } else {
+                priceStartEB = null;
+                priceEndEB = null;
+            }
+
+            if (bookTypesList.contains("Audio book")) {
+                priceStartAB = priceStartDouble;
+                priceEndAB = priceEndDouble;
+            } else {
+                priceStartAB = null;
+                priceEndAB = null;
             }
         }
-        boolean finalPaperBook = paperBook;
-        boolean finalEbook = ebook;
-        boolean finalAudiobook = audiobook;
 
-        double minPrice;
-        double maxPrice;
-        if (priceStart == null) {
-            minPrice = 0;
-        } else {
-            minPrice = Double.parseDouble(priceStart);
-        }
-        if (priceEnd == null) {
-            maxPrice = Double.MAX_VALUE;
-        } else {
-            maxPrice = Double.parseDouble(priceEnd);
-        }
+        Page<Book> books = bookRepository.findByFilterParams(
+                bookTitle
+                , hasCategories
+                , categoriesList
+                , priceStartPB, priceEndPB
+                , priceStartEB, priceEndEB
+                , priceStartAB, priceEndAB
+                ,pageDetails
+        );
 
-        books = books.stream().filter(book -> {
-            if (finalPaperBook && !book.getPaperBooks().isEmpty()) {
-                for (PaperBook pb : book.getPaperBooks()) {
-                    if (pb.getPrice().doubleValue() > minPrice && pb.getPrice().doubleValue() < maxPrice) {
-                        return true;
-                    }
-                }
-                ;
-            }
-            if (finalEbook && book.getEBook() != null && book.getEBook().getPrice().doubleValue() > minPrice && book.getEBook().getPrice().doubleValue() < maxPrice) {
-                return true;
-            }
-            if (finalAudiobook && book.getAudioBook() != null && book.getAudioBook().getPrice().doubleValue() > minPrice && book.getAudioBook().getPrice().doubleValue() < maxPrice) {
-                return true;
-            }
-            return false;
-        }).toList();
-
-        Pageable pageDetails = PageRequest.of(pageNumber, pageSize);
-        int start = (int) pageDetails.getOffset();
-        int end = Math.min((start + pageDetails.getPageSize()), books.size());
-        List<Book> pageContent = books.subList(start, end);
-        List<BookMainInfoDTO> pageContentDTO = bookStreamToBookDtoList(pageContent.stream());
+        List<BookMainInfoDTO> pageContentDTO = bookStreamToBookDtoList(books.stream());
 
         BookResponse bookResponse = new BookResponse();
         bookResponse.setContent(pageContentDTO);
         bookResponse.setPageNumber(pageNumber);
         bookResponse.setPageSize(pageSize);
-        bookResponse.setTotalPages((int) Math.ceil(books.size() * 1.0 / pageSize));
-        bookResponse.setTotalElements((long) books.size());
+        bookResponse.setTotalPages(books.getTotalPages());
+        bookResponse.setTotalElements(books.getTotalElements());
 
         return bookResponse;
     }
-
 
     private List<BookMainInfoDTO> bookStreamToBookDtoList(Stream<Book> books) {
         return books.map(book -> {
@@ -146,7 +120,7 @@ public class BookService {
                     if (!book.getPaperBooks().isEmpty()) {
                         types.add("Paper book");
                     }
-                    if (book.getEBook() != null) {
+                    if (book.getEbook() != null) {
                         types.add("Ebook");
                     }
                     if (book.getAudioBook() != null) {
@@ -158,7 +132,7 @@ public class BookService {
                     if (types.contains("Paper book")) {
                         coverImageUrl = book.getPaperBooks().get(0).getCoverImageUrl();
                     } else if (types.contains("Ebook")) {
-                        coverImageUrl = book.getEBook().getCoverImageUrl();
+                        coverImageUrl = book.getEbook().getCoverImageUrl();
                     } else if (types.contains("Audio book")) {
                         coverImageUrl = book.getAudioBook().getCoverImageUrl();
                     }
@@ -168,4 +142,5 @@ public class BookService {
                 })
                 .toList();
     }
+
 }
