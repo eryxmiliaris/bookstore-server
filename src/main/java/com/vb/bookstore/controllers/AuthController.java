@@ -5,12 +5,14 @@ import com.vb.bookstore.entities.Role;
 import com.vb.bookstore.entities.User;
 import com.vb.bookstore.payloads.auth.LoginRequest;
 import com.vb.bookstore.payloads.MessageResponse;
+import com.vb.bookstore.payloads.auth.ResetRequest;
 import com.vb.bookstore.payloads.auth.SignupRequest;
 import com.vb.bookstore.payloads.auth.UserDTO;
 import com.vb.bookstore.repositories.RoleRepository;
 import com.vb.bookstore.repositories.UserRepository;
 import com.vb.bookstore.security.jwt.JwtUtil;
 import com.vb.bookstore.security.services.UserDetailsImpl;
+import com.vb.bookstore.services.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -43,6 +45,7 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     @PostMapping("/signin")
     public ResponseEntity<UserDTO> authenticateUser(
@@ -85,7 +88,6 @@ public class AuthController {
             return new ResponseEntity<>(new MessageResponse(false, "Email is already in use!"), HttpStatus.CONFLICT);
         }
 
-        // Create new user's account
         User user = modelMapper.map(signUpRequest, User.class);
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
 
@@ -122,6 +124,43 @@ public class AuthController {
 
         return ResponseEntity.ok()
                 .body(userDTO);
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity<MessageResponse> forgotPassword(
+            @RequestParam String email
+    ) {
+        Optional<User> optional = userRepository.findByEmail(email);
+        if (optional.isEmpty()) {
+            return new ResponseEntity<>(new MessageResponse(false, "There is no user with given email"), HttpStatus.NOT_FOUND);
+        }
+
+        User user = optional.get();
+        String resetToken = UUID.randomUUID().toString();
+        user.setResetToken(resetToken);
+        userRepository.save(user);
+
+        emailService.sendSimpleMail(email, "To reset your password, click the link below: \n" + resetToken, "Password Reset Request");
+        return ResponseEntity.ok()
+                .body(new MessageResponse(true, "A password reset link has been sent to: " + email));
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<MessageResponse> resetPassword(
+            @RequestBody ResetRequest request
+    ) {
+        Optional<User> optional = userRepository.findByResetToken(request.getToken());
+        if (optional.isEmpty()) {
+            return new ResponseEntity<>(new MessageResponse(false, "Reset token is invalid"), HttpStatus.NOT_FOUND);
+        }
+
+        User user = optional.get();
+        user.setPassword(encoder.encode(request.getPassword()));
+        user.setResetToken(null);
+        userRepository.save(user);
+
+        return ResponseEntity.ok()
+                .body(new MessageResponse(true, "Password was successfully reset"));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
