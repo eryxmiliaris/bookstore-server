@@ -2,8 +2,8 @@
 INSERT INTO roles(name) VALUES('ROLE_USER');
 INSERT INTO roles(name) VALUES('ROLE_ADMIN');
 -- Default users (login/password: [user/user, admin/admin])
-INSERT INTO users(email, password, username) VALUES ('admin@mail.com', '$2a$12$W5KqZpjA9eFsN0IfpAGcwuSEstYQlEyiDSx4p5byMp1/sL1S3rcqW', 'admin');
-INSERT INTO users(email, password, username) VALUES ('user@mail.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'user');
+INSERT INTO users(email, password, username, reset_token) VALUES ('admin@mail.com', '$2a$12$W5KqZpjA9eFsN0IfpAGcwuSEstYQlEyiDSx4p5byMp1/sL1S3rcqW', 'admin', null);
+INSERT INTO users(email, password, username, reset_token) VALUES ('user@mail.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'user', null);
 -- Set roles to users
 INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);
 INSERT INTO user_roles(user_id, role_id) VALUES (1, 2);
@@ -18,18 +18,10 @@ INSERT INTO `bookstore`.`categories` (`category_name`) VALUES
 ("Romance"),
 ("Thriller"),
 ("Historical Fiction"),
-("Biography"),
-("Self-Help"),
-("Cooking"),
 ("Travel"),
 ("Science"),
-("Poetry"),
 ("Classic Literature"),
-("Young Adult"),
-("Children's"),
-("Graphic Novels"),
-("Non-Fiction"),
-("Comics");
+("Non-Fiction");
 -- Initial data for books
 INSERT INTO `bookstore`.`books`
 (`author`, `title`, `description`, `publication_date`, `rating`, `hidden`)
@@ -114,4 +106,3 @@ VALUES
 (10, '', 14.49, 'ABC Books', 7200, 'Laura Johnson', ''),
 (11, '', 12.99, 'XYZ Publishing', 9000, 'Michael Clark', ''),
 (5, '', 15.99, 'Penguin Random House', 6600, 'David Miller', '');
-

@@ -18,7 +18,8 @@ import java.util.Set;
 @Table(name = "users",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
+                @UniqueConstraint(columnNames = "email"),
+                @UniqueConstraint(columnNames = "reset_token")
         })
 public class User {
     @Id
@@ -39,6 +40,9 @@ public class User {
     @NotBlank
     @Column(nullable = false)
     private String password;
+
+    @Column(name = "reset_token")
+    private String resetToken;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
