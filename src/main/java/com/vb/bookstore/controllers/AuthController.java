@@ -23,6 +23,7 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -53,8 +54,16 @@ public class AuthController {
             @RequestBody
             LoginRequest loginRequest
     ) {
+        String username;
+        if (loginRequest.getLogin().contains("@")) {
+            User user = userRepository.findByEmail(loginRequest.getLogin())
+                    .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
+            username = user.getUsername();
+        }  else {
+            username = loginRequest.getLogin();
+        }
         Authentication authentication = authenticationManager
-                .authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                .authenticate(new UsernamePasswordAuthenticationToken(username, loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
