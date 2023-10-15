@@ -121,20 +121,6 @@ public class AuthController {
                 .body(new MessageResponse(true, "You've been signed out!"));
     }
 
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<UserDTO> getUserInfo(HttpServletRequest request) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDTO userDTO = modelMapper.map(userDetails, UserDTO.class);
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-        userDTO.setRoles(roles);
-
-        return ResponseEntity.ok()
-                .body(userDTO);
-    }
-
     @PostMapping("/forgot")
     public ResponseEntity<MessageResponse> forgotPassword(
             @RequestParam String email
@@ -149,14 +135,14 @@ public class AuthController {
         user.setResetToken(resetToken);
         userRepository.save(user);
 
-        emailService.sendSimpleMail(email, "To reset your password, click the link below: \n" + resetToken, "Password Reset Request");
+        emailService.sendSimpleMail(email, "To reset your password, click the link below: \n" + "http://localhost:5173/reset?token=" + resetToken, "Password Reset Request");
         return ResponseEntity.ok()
                 .body(new MessageResponse(true, "A password reset link has been sent to: " + email));
     }
 
     @PostMapping("/reset")
     public ResponseEntity<MessageResponse> resetPassword(
-            @RequestBody ResetRequest request
+            @Valid @RequestBody ResetRequest request
     ) {
         Optional<User> optional = userRepository.findByResetToken(request.getToken());
         if (optional.isEmpty()) {
