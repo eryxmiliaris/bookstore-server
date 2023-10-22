@@ -31,13 +31,13 @@ public class BookController {
     ) {
         BookResponse bookResponse = bookService.getBooksWithFilters(pageNumber, pageSize, sortBy, sortOrder, priceStart, priceEnd, categories, bookTypes, bookTitle);
 
-        return new ResponseEntity<>(bookResponse, HttpStatus.FOUND);
+        return ResponseEntity.ok(bookResponse);
     }
 
     @GetMapping("/books/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         BookDTO bookDTO = bookService.getBookById(id);
 
-        return new ResponseEntity<>(bookDTO, HttpStatus.FOUND);
+        return ResponseEntity.ok(bookDTO);
     }
 }

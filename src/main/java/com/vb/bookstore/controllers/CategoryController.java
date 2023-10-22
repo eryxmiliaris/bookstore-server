@@ -25,6 +25,6 @@ public class CategoryController {
         List<CategoryDTO> categoryDTOS = categories.stream().map(
                 category -> modelMapper.map(category, CategoryDTO.class))
                 .toList();
-        return new ResponseEntity<>(categoryDTOS, HttpStatus.FOUND);
+        return ResponseEntity.ok(categoryDTOS);
     }
 }

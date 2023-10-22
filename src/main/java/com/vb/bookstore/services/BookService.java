@@ -81,7 +81,7 @@ public class BookService {
                 priceEndEB = null;
             }
 
-            if (bookTypesList.contains("Audio book")) {
+            if (bookTypesList.contains("Audiobook")) {
                 priceStartAB = priceStartDouble;
                 priceEndAB = priceEndDouble;
             } else {
