@@ -35,6 +35,8 @@ public class Book {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
 
+    @OneToMany(mappedBy = "book", fetch = FetchType.LAZY)
+    List<Wishlist> wishlist;
 
     @NotBlank
     @Size(min = 5, max = 100)
