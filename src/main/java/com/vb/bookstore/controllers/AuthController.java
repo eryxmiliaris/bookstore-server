@@ -157,21 +157,5 @@ public class AuthController {
         return ResponseEntity.ok()
                 .body(new MessageResponse(true, "Password was successfully reset"));
     }
-
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
-            String fieldName = ((FieldError) error).getField();
-            String errorMessage = error.getDefaultMessage();
-            errors.put(fieldName, errorMessage);
-        });
-        MessageResponse messageResponse = new MessageResponse();
-        messageResponse.setSuccess(false);
-        messageResponse.setMessage("Validation failed");
-        messageResponse.setErrors(errors);
-        return ResponseEntity.badRequest()
-                .body(messageResponse);
-    }
 }
 
