@@ -68,6 +68,7 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
 
         ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
 
@@ -75,8 +76,7 @@ public class AuthController {
                 .map(GrantedAuthority::getAuthority)
                 .toList();
 
-        UserDTO userDTO = modelMapper.map(userDetails, UserDTO.class);
-        userDTO.setRoles(roles);
+        UserDTO userDTO = modelMapper.map(user, UserDTO.class);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())

@@ -3,11 +3,13 @@ package com.vb.bookstore.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +40,11 @@ public class User {
     @Column(nullable = false)
     private String email;
 
+    @NotNull
+    @Temporal(TemporalType.DATE)
+    @Column(nullable = false)
+    private Date birthDate;
+
     @NotBlank
     @Column(nullable = false)
     private String password;
@@ -53,4 +60,7 @@ public class User {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Wishlist> wishlist;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private List<Address> addresses;
 }

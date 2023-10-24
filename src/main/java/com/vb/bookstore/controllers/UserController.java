@@ -1,64 +1,62 @@
 package com.vb.bookstore.controllers;
 
-import com.vb.bookstore.entities.Book;
-import com.vb.bookstore.entities.User;
-import com.vb.bookstore.entities.Wishlist;
 import com.vb.bookstore.payloads.MessageResponse;
 import com.vb.bookstore.payloads.auth.UserDTO;
+import com.vb.bookstore.payloads.user.AddressDTO;
+import com.vb.bookstore.payloads.user.UpdateUserInfoRequest;
+import com.vb.bookstore.payloads.user.UpdateUserInfoResponse;
 import com.vb.bookstore.payloads.user.WishlistDTO;
-import com.vb.bookstore.repositories.BookRepository;
-import com.vb.bookstore.repositories.UserRepository;
-import com.vb.bookstore.repositories.WishlistRepository;
+import com.vb.bookstore.services.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/user")
 public class UserController {
-    private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
-    private final BookRepository bookRepository;
-    private final WishlistRepository wishlistRepository;
+    private final UserService userService;
 
     @GetMapping("/info")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<UserDTO> getUserInfo(HttpServletRequest request) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UserDTO userDTO = modelMapper.map(userDetails, UserDTO.class);
-        List<String> roles = userDetails.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
-        userDTO.setRoles(roles);
-
+        UserDTO userDTO = userService.getUserInfo();
         return ResponseEntity.ok()
                 .body(userDTO);
+    }
+
+    @PutMapping("/info")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> updateUserInfo(
+            @Valid
+            @RequestBody
+            UpdateUserInfoRequest request
+    ) throws ParseException {
+        UpdateUserInfoResponse updateUserInfoResponse = userService.updateUserInfo(request);
+
+        if (updateUserInfoResponse.getJwtCookie() == null) {
+            return ResponseEntity.badRequest().body(updateUserInfoResponse.getMessageResponse());
+        }
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.SET_COOKIE, updateUserInfoResponse.getJwtCookie().toString())
+                .body(updateUserInfoResponse.getMessageResponse());
     }
 
     @GetMapping("/wishlist")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<WishlistDTO>> getWishlist() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow();
-        List<Wishlist> wishlists = wishlistRepository.findByUserId(user.getId());
-        List<WishlistDTO> wishlistDTOS = wishlists.stream().map((element) -> {
-            WishlistDTO mapped = modelMapper.map(element, WishlistDTO.class);
-            mapped.setBookId(element.getBook().getId());
-            return mapped;
-        }).toList();
+        List<WishlistDTO> wishlistDTOS = userService.getWishlist();
+
         return ResponseEntity.ok(wishlistDTOS);
     }
 
@@ -69,37 +67,50 @@ public class UserController {
             @RequestBody
             WishlistDTO request
     ) {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow();
-        Book book = bookRepository.findById(request.getBookId())
-                .orElseThrow();
-        Optional<Wishlist> wishlistItem = wishlistRepository.findByUserIdAndBookIdAndBookTypeAndPaperBookId(user.getId(), book.getId(), request.getBookType(), request.getPaperBookId());
-        if (wishlistItem.isPresent()) {
-            return new ResponseEntity<>(new MessageResponse(false, "User already has this book in his wishlist!"), HttpStatus.CONFLICT);
-        }
-        Wishlist newWishlistItem = new Wishlist();
-        newWishlistItem.setBookType(request.getBookType());
-        newWishlistItem.setPaperBookId(request.getPaperBookId());
-        newWishlistItem.setUser(user);
-        newWishlistItem.setBook(book);
-        wishlistRepository.save(newWishlistItem);
-        return ResponseEntity.ok(new MessageResponse(true, "Book has been added to your wishlist successfully!"));
+        MessageResponse messageResponse = userService.addBookToWishlist(request);
+        return ResponseEntity.ok(messageResponse);
     }
 
     @DeleteMapping("/wishlist/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> deleteBookFromWishlist(@PathVariable Long id) {
-        Wishlist wishlistItem = wishlistRepository.findById(id)
-                .orElseThrow();
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow();
-        if (user.getUsername().equals(userDetails.getUsername())) {
-            wishlistRepository.delete(wishlistItem);
-        } else {
-            return ResponseEntity.badRequest().body(new MessageResponse(false, "Missing access"));
-        }
-        return ResponseEntity.ok(new MessageResponse(true, "Book was removed from your wishlist!"));
+        MessageResponse messageResponse = userService.deleteBookFromWishlist(id);
+        return ResponseEntity.ok(messageResponse);
+    }
+
+    @GetMapping("/address")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<AddressDTO>> getAllAddresses() {
+        List<AddressDTO> addressDTOS = userService.getAllAddresses();
+
+        return ResponseEntity.ok(addressDTOS);
+    }
+
+    @PostMapping("/address")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> addAddress(
+            @Valid
+            @RequestBody
+            AddressDTO request
+    ) {
+        MessageResponse messageResponse = userService.addAddress(request);
+        return ResponseEntity.ok(messageResponse);
+    }
+
+    @DeleteMapping("/address/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> deleteAddress(@PathVariable Long id) {
+        MessageResponse messageResponse = userService.deleteAddress(id);
+        return ResponseEntity.ok(messageResponse);
+    }
+
+    @PutMapping("/address/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> updateAddress(
+            @Valid @RequestBody AddressDTO newAddress,
+            @PathVariable Long id
+    ) {
+        MessageResponse messageResponse = userService.updateAddress(newAddress, id);
+        return ResponseEntity.ok(messageResponse);
     }
 }

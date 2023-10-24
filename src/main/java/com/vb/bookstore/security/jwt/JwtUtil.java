@@ -50,6 +50,18 @@ public class JwtUtil {
                 .build();
     }
 
+    public ResponseCookie generateJwtCookieFromUsername(String username) {
+        String jwt = generateTokenFromUsername(username);
+        return ResponseCookie
+                .from(jwtCookie, jwt)
+                .path("/api")
+                .maxAge(jwtExpirationMs / 1000)
+                .httpOnly(true)
+                .secure(true)
+                .sameSite("none")
+                .build();
+    }
+
     public ResponseCookie getCleanJwtCookie() {
         return ResponseCookie
                 .from(jwtCookie, null)
