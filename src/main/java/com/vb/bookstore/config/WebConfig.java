@@ -25,10 +25,10 @@ public class WebConfig {
                         .allowedOrigins("http://localhost:5173")
                         .allowedMethods(HttpMethod.GET.name(),
                                 HttpMethod.POST.name(),
-                                HttpMethod.DELETE.name())
+                                HttpMethod.DELETE.name(),
+                                HttpMethod.PUT.name())
                         .allowedHeaders(HttpHeaders.CONTENT_TYPE,
                                 HttpHeaders.AUTHORIZATION)
-
                         .allowCredentials(true);
             }
         };

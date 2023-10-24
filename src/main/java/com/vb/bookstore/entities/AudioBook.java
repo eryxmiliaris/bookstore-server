@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @EqualsAndHashCode(exclude = "book")
 @ToString(exclude = "book")
 @Entity
-@Table(name = "audio_books")
+@Table(name = "audiobooks")
 public class AudioBook {
     @Id
     @Column(name = "book_id")
@@ -34,6 +35,27 @@ public class AudioBook {
     @Column(name = "price", precision = 6, scale = 2, nullable = false)
     private BigDecimal price;
 
+    @NotNull
+    private Boolean hasDiscount;
+
+    @DecimalMin(value = "0.01")
+    @DecimalMax(value = "9999.99")
+    @Column(precision = 6, scale = 2, nullable = false)
+    private BigDecimal priceWithDiscount;
+
+    @Min(value = 0)
+    @Max(value = 100)
+    @Column(nullable = false)
+    private Integer discountPercentage;
+
+    @DecimalMin(value = "0.01")
+    @DecimalMax(value = "9999.99")
+    @Column(precision = 6, scale = 2, nullable = false)
+    private BigDecimal discountAmount;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date discountEndDate;
+
     @NotBlank
     @Size(min = 5, max = 100)
     @Column(nullable = false)
@@ -53,5 +75,5 @@ public class AudioBook {
     @Min(value = 60)
     @Max(value = 360000)
     @Column(nullable = false)
-    private Integer duration_seconds;
+    private Integer durationSeconds;
 }

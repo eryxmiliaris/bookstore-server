@@ -15,14 +15,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                 LEFT JOIN category_books cb ON b.id = cb.book_id
                 LEFT JOIN categories c ON cb.category_id = c.category_id
                 LEFT JOIN paper_books pb ON b.id = pb.book_id
-                LEFT JOIN audio_books ab ON b.id = ab.book_id
+                LEFT JOIN audiobooks ab ON b.id = ab.book_id
                 LEFT JOIN ebooks eb ON b.id = eb.book_id
                 WHERE
                     (:title IS NULL OR b.title LIKE CONCAT('%', :title, '%'))
                     AND ((:hasCategories=FALSE OR :hasCategories IS NULL) OR c.category_name IN (:categories))
-                    AND (pb.price BETWEEN :priceStartPB AND :priceEndPB
-                        OR eb.price BETWEEN :priceStartEB AND :priceEndEB
-                        OR ab.price BETWEEN :priceStartAB AND :priceEndAB)
+                    AND (pb.price_with_discount BETWEEN :priceStartPB AND :priceEndPB
+                        OR eb.price_with_discount BETWEEN :priceStartEB AND :priceEndEB
+                        OR ab.price_with_discount BETWEEN :priceStartAB AND :priceEndAB)
             """
             ,countQuery = """
             SELECT COUNT(DISTINCT b.id)
@@ -30,14 +30,14 @@ public interface BookRepository extends JpaRepository<Book, Long> {
                 LEFT JOIN category_books cb ON b.id = cb.book_id
                 LEFT JOIN categories c ON cb.category_id = c.category_id
                 LEFT JOIN paper_books pb ON b.id = pb.book_id
-                LEFT JOIN audio_books ab ON b.id = ab.book_id
+                LEFT JOIN audiobooks ab ON b.id = ab.book_id
                 LEFT JOIN ebooks eb ON b.id = eb.book_id
                 WHERE
                     (:title IS NULL OR b.title LIKE CONCAT('%', :title, '%'))
                     AND ((:hasCategories=FALSE OR :hasCategories IS NULL) OR c.category_name IN (:categories))
-                    AND (pb.price BETWEEN :priceStartPB AND :priceEndPB
-                        OR eb.price BETWEEN :priceStartEB AND :priceEndEB
-                        OR ab.price BETWEEN :priceStartAB AND :priceEndAB)
+                    AND (pb.price_with_discount BETWEEN :priceStartPB AND :priceEndPB
+                        OR eb.price_with_discount BETWEEN :priceStartEB AND :priceEndEB
+                        OR ab.price_with_discount BETWEEN :priceStartAB AND :priceEndAB)
             """
     ,nativeQuery = true)
     Page<Book> findByFilterParams(

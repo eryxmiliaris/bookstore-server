@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -14,6 +15,11 @@ public class PaperBookDTO {
     private Long bookId;
     private String coverImageUrl;
     private BigDecimal price;
+    private Boolean hasDiscount;
+    private BigDecimal priceWithDiscount;
+    private Integer discountPercentage;
+    private BigDecimal discountAmount;
+    private Date discountEndDate;
     private String publisher;
     private String coverType;
     private String isbn;
