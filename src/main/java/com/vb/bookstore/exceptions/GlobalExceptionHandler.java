@@ -19,7 +19,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(AuthEntryPointJwt.class);
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<MessageResponse> badCredentialsExceptionHandler(BadCredentialsException e) {
+    public ResponseEntity<MessageResponse> handleBadCredentialsException(BadCredentialsException e) {
         logger.error("Bad credentials error: {}", e.getMessage());
         String message = e.getMessage();
         MessageResponse response = new MessageResponse();
@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.UNAUTHORIZED);
     }
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<MessageResponse> resourceNotFountExceptionHandler(ResourceNotFoundException e) {
+    public ResponseEntity<MessageResponse> handleResourceNotFoundException(ResourceNotFoundException e) {
         logger.error("Resource not found error: {}", e.getMessage());
         String message = e.getMessage();
         MessageResponse response = new MessageResponse();
@@ -37,9 +37,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<MessageResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
+    public ResponseEntity<MessageResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        e.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -50,5 +50,13 @@ public class GlobalExceptionHandler {
         messageResponse.setErrors(errors);
         return ResponseEntity.badRequest()
                 .body(messageResponse);
+    }
+    @ExceptionHandler(ApiRequestException.class)
+    public ResponseEntity<MessageResponse> handleApiRequestException(ApiRequestException e) {
+        logger.error("Api request error: {}", e.getMessage());
+        MessageResponse response = new MessageResponse();
+        response.setSuccess(false);
+        response.setMessage(e.getMessage());
+        return new ResponseEntity<>(response, e.getStatus());
     }
 }
