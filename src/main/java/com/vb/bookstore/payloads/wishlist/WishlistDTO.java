@@ -1,6 +1,5 @@
-package com.vb.bookstore.payloads.user;
+package com.vb.bookstore.payloads.wishlist;
 
-import com.vb.bookstore.payloads.books.BookDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
