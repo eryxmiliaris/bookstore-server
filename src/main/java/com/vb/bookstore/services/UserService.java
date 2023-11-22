@@ -1,36 +1,28 @@
 package com.vb.bookstore.services;
 
-import com.vb.bookstore.entities.Address;
-import com.vb.bookstore.entities.Book;
-import com.vb.bookstore.entities.User;
-import com.vb.bookstore.entities.Wishlist;
+import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.auth.UserDTO;
 import com.vb.bookstore.payloads.user.AddressDTO;
 import com.vb.bookstore.payloads.user.UpdateUserInfoRequest;
 import com.vb.bookstore.payloads.user.UpdateUserInfoResponse;
-import com.vb.bookstore.payloads.user.WishlistDTO;
+import com.vb.bookstore.payloads.user.UserDTO;
 import com.vb.bookstore.repositories.AddressRepository;
-import com.vb.bookstore.repositories.BookRepository;
+import com.vb.bookstore.repositories.RoleRepository;
 import com.vb.bookstore.repositories.UserRepository;
-import com.vb.bookstore.repositories.WishlistRepository;
 import com.vb.bookstore.security.jwt.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -38,16 +30,30 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final ModelMapper modelMapper;
-    private final UserRepository userRepository;
-    private final BookRepository bookRepository;
-    private final WishlistRepository wishlistRepository;
-    private final AddressRepository addressRepository;
     private final JwtUtil jwtUtil;
+    private final UserRepository userRepository;
+    private final AddressRepository addressRepository;
+    private final RoleRepository roleRepository;
 
-    private User getUser() {
+    public User getCurrentUser() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow();
+    }
+
+    public boolean currentUserIsAdmin() {
+        boolean isAdmin = false;
+        Role adminRole = roleRepository.findByName(RoleEnum.ROLE_ADMIN)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", RoleEnum.ROLE_ADMIN.toString()));
+        try {
+            User user = getCurrentUser();
+            if (user.getRoles().contains(adminRole)) {
+                isAdmin = true;
+            }
+        } catch (Exception e) {
+
+        }
+        return isAdmin;
     }
 
     public UserDTO getUserInfo() {
@@ -65,7 +71,7 @@ public class UserService {
     }
 
     public UpdateUserInfoResponse updateUserInfo(UpdateUserInfoRequest request) throws ParseException {
-        User user = getUser();
+        User user = getCurrentUser();
 
         if (!Objects.equals(request.getUsername(), user.getUsername())) {
             if (userRepository.findByUsername(request.getUsername()).isPresent()) {
@@ -81,8 +87,7 @@ public class UserService {
 
         user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        user.setBirthDate(formatter.parse(request.getBirthDate()));
+        user.setBirthDate(request.getBirthDate());
 
         userRepository.save(user);
 
@@ -91,54 +96,10 @@ public class UserService {
         return new UpdateUserInfoResponse(jwtCookie, new MessageResponse(true, "User info has been updated"));
     }
 
-    public List<WishlistDTO> getWishlist() {
-        User user = getUser();
 
-        List<Wishlist> wishlists = wishlistRepository.findByUserId(user.getId());
-        List<WishlistDTO> wishlistDTOS = wishlists.stream().map((element) -> {
-            WishlistDTO mapped = modelMapper.map(element, WishlistDTO.class);
-            mapped.setBookId(element.getBook().getId());
-            return mapped;
-        }).toList();
-
-        return wishlistDTOS;
-    }
-
-    public MessageResponse addBookToWishlist(WishlistDTO request) {
-        User user = getUser();
-
-        Book book = bookRepository.findById(request.getBookId())
-                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", request.getBookId()));
-        Optional<Wishlist> wishlistItem = wishlistRepository.findByUserIdAndBookIdAndBookTypeAndPaperBookId(user.getId(), book.getId(), request.getBookType(), request.getPaperBookId());
-        if (wishlistItem.isPresent()) {
-            throw new ApiRequestException("User already has this book in his wishlist!", HttpStatus.CONFLICT);
-        }
-        Wishlist newWishlistItem = new Wishlist();
-        newWishlistItem.setBookType(request.getBookType());
-        newWishlistItem.setPaperBookId(request.getPaperBookId());
-        newWishlistItem.setUser(user);
-        newWishlistItem.setBook(book);
-        wishlistRepository.save(newWishlistItem);
-
-        return new MessageResponse(true, "Book has been added to your wishlist successfully!");
-    }
-
-    public MessageResponse deleteBookFromWishlist(Long id) {
-        Wishlist wishlistItem = wishlistRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Wishlist item", "id", id));
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow();
-        if (user.getUsername().equals(wishlistItem.getUser().getUsername())) {
-            wishlistRepository.delete(wishlistItem);
-        } else {
-            throw new ApiRequestException("Missing access", HttpStatus.FORBIDDEN);
-        }
-        return new MessageResponse(true, "Book was removed from your wishlist!");
-    }
 
     public List<AddressDTO> getAllAddresses() {
-        User user = getUser();
+        User user = getCurrentUser();
 
         List<Address> userAddresses = addressRepository.findByUser(user);
         List<AddressDTO> userAddressesDtos = userAddresses.stream().map((element) -> modelMapper.map(element, AddressDTO.class)).toList();
@@ -147,7 +108,7 @@ public class UserService {
     }
 
     public MessageResponse addAddress(AddressDTO request) {
-        User user = getUser();
+        User user = getCurrentUser();
 
         List<Address> userAddresses = addressRepository.findByUser(user);
         if (userAddresses.size() >= 3) {
@@ -155,6 +116,7 @@ public class UserService {
         }
         Address address = modelMapper.map(request, Address.class);
         address.setUser(user);
+
         addressRepository.save(address);
 
         return new MessageResponse(true, "New address has been successfully added");
@@ -164,13 +126,21 @@ public class UserService {
     public MessageResponse deleteAddress(Long id) {
         Address address = addressRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", id));
-        User user = getUser();
+        User user = getCurrentUser();
+        Cart cart = user.getCart();
+
+        if (cart.getAddress() == address && cart.getPaymentStatus() != null) {
+            throw new ApiRequestException("This address is used in an ongoing order; complete the payment or cancel the order to delete the address", HttpStatus.FORBIDDEN);
+        } else {
+            cart.setAddress(null);
+        }
 
         if (user.getUsername().equals(address.getUser().getUsername())) {
             addressRepository.delete(address);
         } else {
             throw new ApiRequestException("Missing access", HttpStatus.FORBIDDEN);
         }
+
         return new MessageResponse(true, "Address was deleted!");
     }
 
@@ -179,7 +149,8 @@ public class UserService {
         if (oldAddress.isEmpty()) {
             throw new ResourceNotFoundException("Address", "id", id);
         }
-        User user = getUser();
+
+        User user = getCurrentUser();
 
         if (user.getUsername().equals(oldAddress.get().getUser().getUsername())) {
             Address newAddressEntity = modelMapper.map(newAddress, Address.class);
@@ -187,6 +158,7 @@ public class UserService {
             newAddressEntity.setUser(user);
             addressRepository.save(newAddressEntity);
         }
+
         return new MessageResponse(true, "Address has been successfully updated");
     }
 }

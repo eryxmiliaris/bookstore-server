@@ -4,7 +4,8 @@ import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
+
+import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
@@ -18,6 +19,5 @@ public class UpdateUserInfoRequest {
     @Email
     private String email;
     @NotNull
-    @DateTimeFormat
-    private String birthDate;
+    private LocalDate birthDate;
 }

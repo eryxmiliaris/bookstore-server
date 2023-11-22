@@ -1,10 +1,10 @@
-package com.vb.bookstore.payloads.auth;
+package com.vb.bookstore.payloads.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -14,7 +14,9 @@ public class UserDTO {
     private Long id;
     private String username;
     private String email;
-    private Date birthDate;
+    private LocalDate birthDate;
     private List<String> roles;
+    private boolean hasActiveSubscription;
+    private LocalDate activeSubscriptionEndDate;
 }
 
