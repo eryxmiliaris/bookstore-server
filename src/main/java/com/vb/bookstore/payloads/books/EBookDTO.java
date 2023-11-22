@@ -5,20 +5,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class EBookDTO {
     private Long id;
-    private String coverImageUrl;
     private BigDecimal price;
     private Boolean hasDiscount;
     private BigDecimal priceWithDiscount;
     private Integer discountPercentage;
     private BigDecimal discountAmount;
-    private Date discountEndDate;
+    private LocalDateTime discountEndDate;
     private String publisher;
     private Integer numOfPages;
+    private Boolean isHidden;
 }

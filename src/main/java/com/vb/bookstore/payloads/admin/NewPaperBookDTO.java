@@ -1,5 +1,6 @@
-package com.vb.bookstore.payloads.books;
+package com.vb.bookstore.payloads.admin;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,16 +11,24 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AudioBookDTO {
+public class NewPaperBookDTO {
     private Long id;
-    private BigDecimal price;
-    private Boolean hasDiscount;
-    private BigDecimal priceWithDiscount;
-    private Integer discountPercentage;
-    private BigDecimal discountAmount;
-    private LocalDateTime discountEndDate;
-    private String publisher;
-    private String narrator;
-    private Integer durationSeconds;
+    @NotNull
     private Boolean isHidden;
+    @NotNull
+    private BigDecimal price;
+    @NotNull
+    private Boolean hasDiscount;
+    private Integer discountPercentage;
+    private LocalDateTime discountEndDate;
+    @NotNull
+    private String publisher;
+    @NotNull
+    private String coverType;
+    @NotNull
+    private String isbn;
+    @NotNull
+    private String isAvailable;
+    @NotNull
+    private Integer numOfPages;
 }

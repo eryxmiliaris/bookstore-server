@@ -3,15 +3,17 @@ package com.vb.bookstore.entities;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(exclude = "book")
-@ToString(exclude = "book")
 @Entity
 @Table(name = "audiobooks")
 public class AudioBook {
@@ -22,7 +24,12 @@ public class AudioBook {
     @OneToOne(fetch = FetchType.LAZY)
     @MapsId
     @JoinColumn(name = "book_id")
+    @ToString.Exclude
     private Book book;
+
+    @NotNull
+    @Column(nullable = false)
+    private Boolean isHidden;
 
     @NotBlank
     @Size(max = 255)
@@ -45,16 +52,14 @@ public class AudioBook {
 
     @Min(value = 0)
     @Max(value = 100)
-    @Column(nullable = false)
     private Integer discountPercentage;
 
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal discountAmount;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date discountEndDate;
+    private LocalDateTime discountEndDate;
 
     @NotBlank
     @Size(min = 5, max = 100)
@@ -76,4 +81,20 @@ public class AudioBook {
     @Max(value = 360000)
     @Column(nullable = false)
     private Integer durationSeconds;
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass) return false;
+        AudioBook audioBook = (AudioBook) o;
+        return getId() != null && Objects.equals(getId(), audioBook.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode() : getClass().hashCode();
+    }
 }
