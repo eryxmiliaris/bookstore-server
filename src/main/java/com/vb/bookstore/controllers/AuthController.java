@@ -1,19 +1,19 @@
 package com.vb.bookstore.controllers;
 
-import com.vb.bookstore.entities.RoleEnum;
+import com.vb.bookstore.entities.Cart;
 import com.vb.bookstore.entities.Role;
+import com.vb.bookstore.entities.RoleEnum;
 import com.vb.bookstore.entities.User;
-import com.vb.bookstore.payloads.auth.LoginRequest;
 import com.vb.bookstore.payloads.MessageResponse;
+import com.vb.bookstore.payloads.auth.LoginRequest;
 import com.vb.bookstore.payloads.auth.ResetRequest;
 import com.vb.bookstore.payloads.auth.SignupRequest;
-import com.vb.bookstore.payloads.auth.UserDTO;
+import com.vb.bookstore.payloads.user.UserDTO;
 import com.vb.bookstore.repositories.RoleRepository;
 import com.vb.bookstore.repositories.UserRepository;
 import com.vb.bookstore.security.jwt.JwtUtil;
 import com.vb.bookstore.security.services.UserDetailsImpl;
 import com.vb.bookstore.services.EmailService;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -21,19 +21,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 @RequiredArgsConstructor
@@ -77,6 +74,7 @@ public class AuthController {
                 .toList();
 
         UserDTO userDTO = modelMapper.map(user, UserDTO.class);
+        userDTO.setRoles(roles);
 
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, jwtCookie.toString())
@@ -105,7 +103,15 @@ public class AuthController {
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
         roles.add(userRole);
 
+        Cart cart = new Cart();
+        cart.setUser(user);
+        cart.setTotalPrice(BigDecimal.valueOf(0));
+        cart.setHasPromoCode(false);
+        cart.setHasPaperBooks(false);
+
         user.setRoles(roles);
+        user.setCart(cart);
+        user.setHasActiveSubscription(false);
         userRepository.save(user);
 
         return ResponseEntity.ok()

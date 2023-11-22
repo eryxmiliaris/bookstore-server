@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -15,8 +16,10 @@ public class BookDTO {
     private String title;
     private String author;
     private String description;
-    private Double rating;
-    private Date publicationDate;
+    private BigDecimal rating;
+    private List<ReviewDTO> reviews;
+    private Integer numOfReviews;
+    private LocalDate publicationDate;
     private List<String> categories;
     private List<PaperBookDTO> paperBooks;
     private AudioBookDTO audioBook;
