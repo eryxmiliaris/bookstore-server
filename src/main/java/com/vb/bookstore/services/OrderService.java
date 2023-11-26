@@ -1,7 +1,6 @@
 package com.vb.bookstore.services;
 
 
-import com.vb.bookstore.entities.Order;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -74,6 +73,7 @@ public class OrderService {
                     libraryItem.setUser(user);
                     libraryItem.setIsSubscriptionItem(false);
                     libraryItem.setAddedDate(LocalDate.now());
+                    libraryItem.setLastPosition("0");
                     return libraryItem;
                 }).collect(Collectors.toList());
 

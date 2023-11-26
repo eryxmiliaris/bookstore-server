@@ -19,4 +19,5 @@ public class LibraryItemDTO {
     private Integer numOfPages;
     private String narrator;
     private Integer durationSeconds;
+    private String lastPosition;
 }

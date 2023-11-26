@@ -2,51 +2,35 @@ package com.vb.bookstore.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.time.LocalDate;
 import java.util.Objects;
 
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table(name = "library_items")
-public class LibraryItem {
+@Table(name = "book_notes")
+public class BookNote {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
-    private LocalDate addedDate;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    @ToString.Exclude
-    private User user;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
-    @ToString.Exclude
-    private Book book;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "collection_id")
-    @ToString.Exclude
-    private LibraryCollection libraryCollection;
+    @NotBlank
+    private String name;
 
     @NotBlank
-    private String bookType;
+    private String text;
 
-    @NotNull
-    private Boolean isSubscriptionItem;
+    @NotBlank
+    private String position;
 
-    @NotNull
-    private String lastPosition;
+    @ManyToOne
+    @JoinColumn(name = "library_item_id")
+    private LibraryItem libraryItem;
 
     @Override
     public final boolean equals(Object o) {
@@ -55,8 +39,8 @@ public class LibraryItem {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        LibraryItem that = (LibraryItem) o;
-        return getId() != null && Objects.equals(getId(), that.getId());
+        BookNote bookNote = (BookNote) o;
+        return getId() != null && Objects.equals(getId(), bookNote.getId());
     }
 
     @Override
