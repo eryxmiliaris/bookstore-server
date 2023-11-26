@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AdminService {
     private final ModelMapper modelMapper;
+    private final ObjectMapper objectMapper;
 
     private final CategoryRepository categoryRepository;
     private final EBookRepository eBookRepository;
@@ -42,7 +43,12 @@ public class AdminService {
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
 
-    public Long addNewBook(NewBookDTO newBookDTO, MultipartFile coverImage, MultipartFile bookFile) {
+    public Long addNewBook(
+            NewBookDTO newBookDTO,
+            MultipartFile coverImage,
+            MultipartFile bookFile,
+            MultipartFile previewFile
+    ) {
         Book book = new Book();
         book.setTitle(newBookDTO.getTitle());
         book.setAuthor(newBookDTO.getAuthor());
@@ -99,7 +105,8 @@ public class AdminService {
                 id = bookRepository.save(book).getId();
             }
             case "Ebook" -> {
-                String downloadLink = saveBookFile(bookFile, "ebooks");
+                String downloadLink = saveBookFile(bookFile, "ebooks", false);
+                String previewPath = saveBookFile(previewFile, "ebooks", true);
                 EBook ebook = new EBook();
                 ebook.setCoverImageUrl(coverImagePath);
                 ebook.setPrice(newBookDTO.getPrice());
@@ -115,6 +122,7 @@ public class AdminService {
                 }
                 ebook.setPublisher(newBookDTO.getPublisher());
                 ebook.setDownloadLink(downloadLink);
+                ebook.setPreviewPath(previewPath);
                 ebook.setNumOfPages(newBookDTO.getNumOfPages());
                 ebook.setBook(book);
                 ebook.setIsHidden(newBookDTO.getIsHidden());
@@ -123,7 +131,8 @@ public class AdminService {
                 id = bookRepository.save(book).getId();
             }
             case "Audiobook" -> {
-                String downloadLink = saveBookFile(bookFile, "audiobooks");
+                String downloadLink = saveBookFile(bookFile, "audiobooks", false);
+                String previewPath = saveBookFile(previewFile, "audiobooks", true);
                 AudioBook audioBook = new AudioBook();
                 audioBook.setCoverImageUrl(coverImagePath);
                 audioBook.setPrice(newBookDTO.getPrice());
@@ -139,6 +148,7 @@ public class AdminService {
                 }
                 audioBook.setPublisher(newBookDTO.getPublisher());
                 audioBook.setDownloadLink(downloadLink);
+                audioBook.setPreviewPath(previewPath);
                 audioBook.setNarrator(newBookDTO.getNarrator());
                 audioBook.setDurationSeconds(newBookDTO.getDurationSeconds());
                 audioBook.setBook(book);
@@ -151,8 +161,8 @@ public class AdminService {
         return id;
     }
 
-    private String saveBookFile(MultipartFile file, String bookType) {
-        final String directoryPath = "D:\\book_store\\" + bookType + "\\";
+    private String saveBookFile(MultipartFile file, String bookType, boolean preview) {
+        final String directoryPath = "D:\\book_store\\" + (preview ? "previews\\" : "") + bookType + "\\";
 
         if (file == null || file.isEmpty()) {
             throw new ApiRequestException("Cannot save an empty file", HttpStatus.BAD_REQUEST);
@@ -280,7 +290,13 @@ public class AdminService {
         return new MessageResponse(true, "Paper book has been successfully updated or added to book with id " + id);
     }
 
-    public MessageResponse setEbook(Long id, NewEBookDTO newEBookDTO, MultipartFile coverImageFile, MultipartFile bookFile) {
+    public MessageResponse setEbook(
+            Long id,
+            NewEBookDTO newEBookDTO,
+            MultipartFile coverImageFile,
+            MultipartFile bookFile,
+            MultipartFile previewFile
+    ) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         EBook ebook = modelMapper.map(newEBookDTO, EBook.class);
@@ -306,7 +322,7 @@ public class AdminService {
         }
 
         if (bookFile != null) {
-            String bookFilePath = saveBookFile(bookFile, "ebooks");
+            String bookFilePath = saveBookFile(bookFile, "ebooks", false);
             ebook.setDownloadLink(bookFilePath);
             if (existingEbook != null) {
                 File fileToDelete = new File(existingEbook.getDownloadLink());
@@ -318,6 +334,21 @@ public class AdminService {
             ebook.setDownloadLink(existingEbook.getDownloadLink());
         } else {
             throw new ApiRequestException("Provide book file", HttpStatus.BAD_REQUEST);
+        }
+
+        if (previewFile != null) {
+            String previewFilePath = saveBookFile(previewFile, "ebooks", true);
+            ebook.setPreviewPath(previewFilePath);
+            if (existingEbook != null) {
+                File fileToDelete = new File(existingEbook.getPreviewPath());
+                if (fileToDelete.exists()) {
+                    fileToDelete.delete();
+                }
+            }
+        } else if (existingEbook != null) {
+            ebook.setPreviewPath(existingEbook.getPreviewPath());
+        } else {
+            throw new ApiRequestException("Provide preview file", HttpStatus.BAD_REQUEST);
         }
 
         ebook.setBook(book);
@@ -342,7 +373,13 @@ public class AdminService {
         return new MessageResponse(true, "Ebook has been successfully set to book with id " + id);
     }
 
-    public MessageResponse setAudiobook(Long id, NewAudioBookDTO newAudiobookDTO, MultipartFile coverImageFile, MultipartFile bookFile) {
+    public MessageResponse setAudiobook(
+            Long id,
+            NewAudioBookDTO newAudiobookDTO,
+            MultipartFile coverImageFile,
+            MultipartFile bookFile,
+            MultipartFile previewFile
+    ) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         AudioBook audioBook = modelMapper.map(newAudiobookDTO, AudioBook.class);
@@ -368,7 +405,7 @@ public class AdminService {
         }
 
         if (bookFile != null) {
-            String bookFilePath = saveBookFile(bookFile, "audiobooks");
+            String bookFilePath = saveBookFile(bookFile, "audiobooks", false);
             audioBook.setDownloadLink(bookFilePath);
             if (existingAudiobook != null) {
                 File fileToDelete = new File(existingAudiobook.getDownloadLink());
@@ -380,6 +417,21 @@ public class AdminService {
             audioBook.setDownloadLink(existingAudiobook.getDownloadLink());
         } else {
             throw new ApiRequestException("Provide book file", HttpStatus.BAD_REQUEST);
+        }
+
+        if (previewFile != null) {
+            String previewFilePath = saveBookFile(previewFile, "audiobooks", true);
+            audioBook.setPreviewPath(previewFilePath);
+            if (existingAudiobook != null) {
+                File fileToDelete = new File(existingAudiobook.getPreviewPath());
+                if (fileToDelete.exists()) {
+                    fileToDelete.delete();
+                }
+            }
+        } else if (existingAudiobook != null) {
+            audioBook.setPreviewPath(existingAudiobook.getPreviewPath());
+        } else {
+            throw new ApiRequestException("Provide preview file", HttpStatus.BAD_REQUEST);
         }
 
         audioBook.setBook(book);
@@ -495,7 +547,6 @@ public class AdminService {
     }
 
     public <T> T getObjectFromJson(String json, Class<T> valueType) {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.readValue(json, valueType);
         } catch (JsonProcessingException e) {

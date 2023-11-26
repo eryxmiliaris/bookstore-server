@@ -5,7 +5,10 @@ import com.vb.bookstore.payloads.books.BookDTO;
 import com.vb.bookstore.payloads.books.BookMainInfoDTO;
 import com.vb.bookstore.payloads.books.CategoryDTO;
 import com.vb.bookstore.services.BookService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,6 +55,28 @@ public class BookController {
             @RequestParam(required = false) Long paperBookId
     ) {
         return bookService.getBookCoverImage(id, bookType, paperBookId);
+    }
+
+    @GetMapping(value = {"/books/{id}/preview.epub", "/books/{id}/preview.mp3"})
+    public ResponseEntity<Resource> downloadBookPreview(
+            @PathVariable Long id,
+            HttpServletRequest request
+    ) {
+        String bookType;
+        if (request.getRequestURI().contains("preview.epub")) {
+            bookType = "Ebook";
+        } else {
+            bookType = "Audiobook";
+        }
+        Resource book = bookService.downloadBookPreview(id, bookType);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + book.getFilename());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(book);
     }
 
     @GetMapping("/books/popular")

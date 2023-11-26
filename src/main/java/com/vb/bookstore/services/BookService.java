@@ -8,6 +8,8 @@ import com.vb.bookstore.payloads.books.*;
 import com.vb.bookstore.repositories.*;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -151,22 +153,23 @@ public class BookService {
     }
 
     public List<BookMainInfoDTO> bookStreamToBookDtoList(Stream<Book> books) {
+        boolean isAdmin = userService.currentUserIsAdmin();
         return books.map(book -> {
                     BookMainInfoDTO bookResponse = modelMapper.map(book, BookMainInfoDTO.class);
                     List<String> types = new ArrayList<>();
 
                     if (!book.getPaperBooks().isEmpty()) {
                         for (PaperBook pb : book.getPaperBooks()) {
-                            if (!pb.getIsHidden()) {
+                            if (isAdmin || !pb.getIsHidden()) {
                                 types.add("Paper book");
                                 break;
                             }
                         }
                     }
-                    if (book.getEbook() != null && !book.getEbook().getIsHidden()) {
+                    if (book.getEbook() != null && (isAdmin || !book.getEbook().getIsHidden())) {
                         types.add("Ebook");
                     }
-                    if (book.getAudioBook() != null && !book.getAudioBook().getIsHidden()) {
+                    if (book.getAudioBook() != null && (isAdmin || !book.getAudioBook().getIsHidden())) {
                         types.add("Audiobook");
                     }
 
@@ -277,5 +280,35 @@ public class BookService {
         List<Category> categories = categoryRepository.findAll();
         List<CategoryDTO> categoryDTOS = categories.stream().map((element) -> modelMapper.map(element, CategoryDTO.class)).collect(Collectors.toList());
         return categoryDTOS;
+    }
+
+    public Resource downloadBookPreview(Long id, String bookType) {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
+
+        Path filePath = null;
+
+        switch (bookType) {
+            case "Ebook" -> {
+                EBook ebook = book.getEbook();
+                if (ebook == null) {
+                    throw new ApiRequestException("Given book has no ebook", HttpStatus.BAD_REQUEST);
+                }
+                filePath = Paths.get(book.getEbook().getPreviewPath());
+            }
+            case "Audiobook" -> {
+                AudioBook audioBook = book.getAudioBook();
+                if (audioBook == null) {
+                    throw new ApiRequestException("Given book has no audiobook", HttpStatus.BAD_REQUEST);
+                }
+                filePath = Paths.get(book.getAudioBook().getPreviewPath());
+            }
+        }
+        Resource bookFile = new FileSystemResource(filePath);
+        if (!bookFile.exists()) {
+            throw new ApiRequestException("File not found", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return bookFile;
     }
 }

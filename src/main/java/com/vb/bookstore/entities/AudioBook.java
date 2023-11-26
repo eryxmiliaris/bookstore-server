@@ -72,6 +72,9 @@ public class AudioBook {
     private String downloadLink;
 
     @NotBlank
+    private String previewPath;
+
+    @NotBlank
     @Size(min = 5, max = 100)
     @Column(nullable = false)
     private String narrator;

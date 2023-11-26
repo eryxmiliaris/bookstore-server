@@ -72,6 +72,9 @@ public class EBook {
     @Column(nullable = false)
     private String downloadLink;
 
+    @NotBlank
+    private String previewPath;
+
     @NotNull
     @Min(value = 1)
     @Max(value = 10000)

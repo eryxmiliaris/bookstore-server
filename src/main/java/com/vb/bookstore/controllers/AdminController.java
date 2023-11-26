@@ -29,11 +29,12 @@ public class AdminController {
     public ResponseEntity<Long> addNewBook(
             @RequestPart String newBook,
             @RequestPart MultipartFile coverImageFile,
-            @RequestPart(required = false) MultipartFile bookFile
+            @RequestPart(required = false) MultipartFile bookFile,
+            @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewBookDTO newBookDTO = adminService.getObjectFromJson(newBook, NewBookDTO.class);
         validator.validate(newBookDTO);
-        Long id = adminService.addNewBook(newBookDTO, coverImageFile, bookFile);
+        Long id = adminService.addNewBook(newBookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(id);
     }
 
@@ -64,11 +65,12 @@ public class AdminController {
             @PathVariable Long id,
             @RequestPart String newEbook,
             @RequestPart MultipartFile coverImageFile,
-            @RequestPart MultipartFile bookFile
+            @RequestPart MultipartFile bookFile,
+            @RequestPart MultipartFile previewFile
     ) {
         NewEBookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEBookDTO.class);
         validator.validate(newEbookDTO);
-        MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile);
+        MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
 
@@ -82,11 +84,12 @@ public class AdminController {
             @PathVariable Long id,
             @RequestPart String newAudiobook,
             @RequestPart MultipartFile coverImageFile,
-            @RequestPart MultipartFile bookFile
+            @RequestPart MultipartFile bookFile,
+            @RequestPart MultipartFile previewFile
     ) {
         NewAudioBookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudioBookDTO.class);
         validator.validate(newAudiobookDTO);
-        MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile);
+        MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
 
@@ -127,11 +130,12 @@ public class AdminController {
             @PathVariable Long id,
             @RequestPart String newEbook,
             @RequestPart(required = false) MultipartFile coverImageFile,
-            @RequestPart(required = false) MultipartFile bookFile
+            @RequestPart(required = false) MultipartFile bookFile,
+            @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewEBookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEBookDTO.class);
         validator.validate(newEbookDTO);
-        MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile);
+        MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
 
@@ -145,11 +149,12 @@ public class AdminController {
             @PathVariable Long id,
             @RequestPart String newAudiobook,
             @RequestPart(required = false) MultipartFile coverImageFile,
-            @RequestPart(required = false) MultipartFile bookFile
+            @RequestPart(required = false) MultipartFile bookFile,
+            @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewAudioBookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudioBookDTO.class);
         validator.validate(newAudiobookDTO);
-        MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile);
+        MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
 
