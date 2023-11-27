@@ -1,5 +1,6 @@
 package com.vb.bookstore.payloads.books;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ public class AudioBookDTO {
     private BigDecimal priceWithDiscount;
     private Integer discountPercentage;
     private BigDecimal discountAmount;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime discountEndDate;
     private String publisher;
     private String narrator;

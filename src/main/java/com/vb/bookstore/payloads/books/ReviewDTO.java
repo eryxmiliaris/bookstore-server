@@ -1,5 +1,6 @@
 package com.vb.bookstore.payloads.books;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,5 +22,6 @@ public class ReviewDTO {
     @Size(min = 20)
     private String text;
     private String userName;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime publicationDate;
 }
