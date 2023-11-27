@@ -34,7 +34,7 @@ public class PaperBook {
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
-    private String coverImageUrl;
+    private String coverImagePath;
 
     @NotNull
     @DecimalMin(value = "0.01")

@@ -18,16 +18,16 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/books")
 public class BookController {
     private final BookService bookService;
 
-    @GetMapping("/books")
+    @GetMapping
     public ResponseEntity<PageableResponse> getAllBooks(
             @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
             @RequestParam(name = "pageSize", defaultValue = "12", required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
-            @RequestParam(name = "sortOrder", defaultValue = "asc", required = false) String sortOrder,
+            @RequestParam(name = "sortOrder", defaultValue = "desc", required = false) String sortOrder,
             @RequestParam(name = "priceStart", required = false) String priceStart,
             @RequestParam(name = "priceEnd", required = false) String priceEnd,
             @RequestParam(name = "category", required = false) String[] categories,
@@ -39,14 +39,14 @@ public class BookController {
         return ResponseEntity.ok(bookResponse);
     }
 
-    @GetMapping("/books/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         BookDTO bookDTO = bookService.getBookById(id);
         return ResponseEntity.ok(bookDTO);
     }
 
     @GetMapping(
-            value = "/books/{id}/coverImage",
+            value = "/{id}/coverImage",
             produces = MediaType.IMAGE_JPEG_VALUE
     )
     public @ResponseBody byte[] getBookCoverImage(
@@ -57,7 +57,7 @@ public class BookController {
         return bookService.getBookCoverImage(id, bookType, paperBookId);
     }
 
-    @GetMapping(value = {"/books/{id}/preview.epub", "/books/{id}/preview.mp3"})
+    @GetMapping(value = {"/{id}/preview.epub", "/{id}/preview.mp3"})
     public ResponseEntity<Resource> downloadBookPreview(
             @PathVariable Long id,
             HttpServletRequest request
@@ -79,20 +79,20 @@ public class BookController {
                 .body(book);
     }
 
-    @GetMapping("/books/popular")
+    @GetMapping("/popular")
     public ResponseEntity<List<BookMainInfoDTO>> getPopularBooks() {
         List<BookMainInfoDTO> popularBooks = bookService.getPopularBooks();
         return ResponseEntity.ok(popularBooks);
     }
 
-    @GetMapping("/books/recommended")
+    @GetMapping("/recommended")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<BookMainInfoDTO>> getRecommendedBooks() {
         List<BookMainInfoDTO> recommendedBooks = bookService.getRecommendedBooks();
         return ResponseEntity.ok(recommendedBooks);
     }
 
-    @GetMapping("/books/categories")
+    @GetMapping("/categories")
     public ResponseEntity<List<CategoryDTO>> getAllCategories() {
         List<CategoryDTO> categoryDTOS = bookService.getAllCategories();
         return ResponseEntity.ok(categoryDTOS);

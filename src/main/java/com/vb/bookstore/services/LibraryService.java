@@ -51,8 +51,8 @@ public class LibraryService {
             if (libraryItem.getBookType().equals("Ebook")) {
                 dto.setNumOfPages(libraryItem.getBook().getEbook().getNumOfPages());
             } else {
-                dto.setNarrator(libraryItem.getBook().getAudioBook().getNarrator());
-                dto.setDurationSeconds(libraryItem.getBook().getAudioBook().getDurationSeconds());
+                dto.setNarrator(libraryItem.getBook().getAudiobook().getNarrator());
+                dto.setDurationSeconds(libraryItem.getBook().getAudiobook().getDurationSeconds());
             }
             return dto;
         }).collect(Collectors.toList());
@@ -91,8 +91,8 @@ public class LibraryService {
         if (libraryItem.getBookType().equals("Ebook")) {
             libraryItemDTO.setNumOfPages(libraryItem.getBook().getEbook().getNumOfPages());
         } else {
-            libraryItemDTO.setNarrator(libraryItem.getBook().getAudioBook().getNarrator());
-            libraryItemDTO.setDurationSeconds(libraryItem.getBook().getAudioBook().getDurationSeconds());
+            libraryItemDTO.setNarrator(libraryItem.getBook().getAudiobook().getNarrator());
+            libraryItemDTO.setDurationSeconds(libraryItem.getBook().getAudiobook().getDurationSeconds());
         }
 
         return libraryItemDTO;
@@ -133,7 +133,7 @@ public class LibraryService {
                 }
             }
             case "Audiobook" -> {
-                if (book.getAudioBook() == null) {
+                if (book.getAudiobook() == null) {
                     throw new ApiRequestException("Book has no assigned audiobook", HttpStatus.BAD_REQUEST);
                 }
             }
@@ -200,8 +200,8 @@ public class LibraryService {
 
         Path filePath = null;
         switch (libraryItem.getBookType()) {
-            case "Ebook" -> filePath = Paths.get(libraryItem.getBook().getEbook().getDownloadLink());
-            case "Audiobook" -> filePath = Paths.get(libraryItem.getBook().getAudioBook().getDownloadLink());
+            case "Ebook" -> filePath = Paths.get(libraryItem.getBook().getEbook().getBookPath());
+            case "Audiobook" -> filePath = Paths.get(libraryItem.getBook().getAudiobook().getBookPath());
         }
         Resource bookFile = new FileSystemResource(filePath);
         if (!bookFile.exists()) {

@@ -12,24 +12,24 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/subscriptions")
 public class SubscriptionController {
     private final SubscriptionService subscriptionService;
 
-    @GetMapping("/subscriptions")
+    @GetMapping
     public ResponseEntity<List<Subscription>> getSubscriptions() {
         List<Subscription> subscriptions = subscriptionService.getSubscriptions();
         return ResponseEntity.ok(subscriptions);
     }
 
-    @PostMapping("/subscriptions/order/{id}")
+    @PostMapping("/order/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> orderSubscription(@PathVariable Long id) {
         MessageResponse redirectResponse = subscriptionService.orderSubscription(id);
         return ResponseEntity.ok(redirectResponse);
     }
 
-    @PostMapping("/subscriptions/confirmPayment")
+    @PostMapping("/confirmPayment")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> confirmPayment() {
         MessageResponse messageResponse = subscriptionService.confirmSubscriptionPayment();

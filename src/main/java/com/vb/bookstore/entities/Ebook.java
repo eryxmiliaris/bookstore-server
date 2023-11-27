@@ -16,7 +16,7 @@ import java.util.Objects;
 @NoArgsConstructor
 @Entity
 @Table(name = "ebooks")
-public class EBook {
+public class Ebook {
     @Id
     @Column(name = "book_id")
     private Long id;
@@ -34,7 +34,7 @@ public class EBook {
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
-    private String coverImageUrl;
+    private String coverImagePath;
 
     @NotNull
     @DecimalMin(value = "0.01")
@@ -70,7 +70,7 @@ public class EBook {
     @NotBlank
     @Size(max = 255)
     @Column(nullable = false)
-    private String downloadLink;
+    private String bookPath;
 
     @NotBlank
     private String previewPath;
@@ -88,8 +88,8 @@ public class EBook {
         Class<?> oEffectiveClass = o instanceof HibernateProxy ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass() : o.getClass();
         Class<?> thisEffectiveClass = this instanceof HibernateProxy ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass() : this.getClass();
         if (thisEffectiveClass != oEffectiveClass) return false;
-        EBook eBook = (EBook) o;
-        return getId() != null && Objects.equals(getId(), eBook.getId());
+        Ebook ebook = (Ebook) o;
+        return getId() != null && Objects.equals(getId(), ebook.getId());
     }
 
     @Override

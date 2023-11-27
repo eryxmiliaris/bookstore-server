@@ -29,11 +29,11 @@ public class Book {
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
-    private AudioBook audioBook;
+    private Audiobook audiobook;
 
     @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
-    private EBook ebook;
+    private Ebook ebook;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(

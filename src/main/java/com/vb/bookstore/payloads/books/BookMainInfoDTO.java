@@ -17,5 +17,4 @@ public class BookMainInfoDTO {
     private String description;
     private BigDecimal rating;
     private List<String> bookTypes;
-    private String coverImageUrl;
 }

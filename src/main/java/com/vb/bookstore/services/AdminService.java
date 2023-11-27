@@ -35,10 +35,10 @@ public class AdminService {
     private final ObjectMapper objectMapper;
 
     private final CategoryRepository categoryRepository;
-    private final EBookRepository eBookRepository;
+    private final EbookRepository ebookRepository;
     private final BookRepository bookRepository;
     private final PaperBookRepository paperBookRepository;
-    private final AudioBookRepository audioBookRepository;
+    private final AudiobookRepository audiobookRepository;
     private final PromoCodeRepository promoCodeRepository;
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
@@ -81,7 +81,7 @@ public class AdminService {
         switch (newBookDTO.getBookType()) {
             case "Paper book" -> {
                 PaperBook paperBook = new PaperBook();
-                paperBook.setCoverImageUrl(coverImagePath);
+                paperBook.setCoverImagePath(coverImagePath);
                 paperBook.setPrice(newBookDTO.getPrice());
                 if (!newBookDTO.getHasDiscount()) {
                     paperBook.setHasDiscount(false);
@@ -105,10 +105,10 @@ public class AdminService {
                 id = bookRepository.save(book).getId();
             }
             case "Ebook" -> {
-                String downloadLink = saveBookFile(bookFile, "ebooks", false);
+                String bookPath = saveBookFile(bookFile, "ebooks", false);
                 String previewPath = saveBookFile(previewFile, "ebooks", true);
-                EBook ebook = new EBook();
-                ebook.setCoverImageUrl(coverImagePath);
+                Ebook ebook = new Ebook();
+                ebook.setCoverImagePath(coverImagePath);
                 ebook.setPrice(newBookDTO.getPrice());
                 if (!newBookDTO.getHasDiscount()) {
                     ebook.setHasDiscount(false);
@@ -121,7 +121,7 @@ public class AdminService {
                     ebook.setDiscountEndDate(newBookDTO.getDiscountEndDate());
                 }
                 ebook.setPublisher(newBookDTO.getPublisher());
-                ebook.setDownloadLink(downloadLink);
+                ebook.setBookPath(bookPath);
                 ebook.setPreviewPath(previewPath);
                 ebook.setNumOfPages(newBookDTO.getNumOfPages());
                 ebook.setBook(book);
@@ -131,30 +131,30 @@ public class AdminService {
                 id = bookRepository.save(book).getId();
             }
             case "Audiobook" -> {
-                String downloadLink = saveBookFile(bookFile, "audiobooks", false);
+                String bookPath = saveBookFile(bookFile, "audiobooks", false);
                 String previewPath = saveBookFile(previewFile, "audiobooks", true);
-                AudioBook audioBook = new AudioBook();
-                audioBook.setCoverImageUrl(coverImagePath);
-                audioBook.setPrice(newBookDTO.getPrice());
+                Audiobook audiobook = new Audiobook();
+                audiobook.setCoverImagePath(coverImagePath);
+                audiobook.setPrice(newBookDTO.getPrice());
                 if (!newBookDTO.getHasDiscount()) {
-                    audioBook.setHasDiscount(false);
-                    audioBook.setPriceWithDiscount(priceWithDiscount);
+                    audiobook.setHasDiscount(false);
+                    audiobook.setPriceWithDiscount(priceWithDiscount);
                 } else {
-                    audioBook.setHasDiscount(true);
-                    audioBook.setDiscountPercentage(newBookDTO.getDiscountPercentage());
-                    audioBook.setDiscountAmount(discountAmount);
-                    audioBook.setPriceWithDiscount(priceWithDiscount);
-                    audioBook.setDiscountEndDate(newBookDTO.getDiscountEndDate());
+                    audiobook.setHasDiscount(true);
+                    audiobook.setDiscountPercentage(newBookDTO.getDiscountPercentage());
+                    audiobook.setDiscountAmount(discountAmount);
+                    audiobook.setPriceWithDiscount(priceWithDiscount);
+                    audiobook.setDiscountEndDate(newBookDTO.getDiscountEndDate());
                 }
-                audioBook.setPublisher(newBookDTO.getPublisher());
-                audioBook.setDownloadLink(downloadLink);
-                audioBook.setPreviewPath(previewPath);
-                audioBook.setNarrator(newBookDTO.getNarrator());
-                audioBook.setDurationSeconds(newBookDTO.getDurationSeconds());
-                audioBook.setBook(book);
-                audioBook.setIsHidden(newBookDTO.getIsHidden());
+                audiobook.setPublisher(newBookDTO.getPublisher());
+                audiobook.setBookPath(bookPath);
+                audiobook.setPreviewPath(previewPath);
+                audiobook.setNarrator(newBookDTO.getNarrator());
+                audiobook.setDurationSeconds(newBookDTO.getDurationSeconds());
+                audiobook.setBook(book);
+                audiobook.setIsHidden(newBookDTO.getIsHidden());
 //                audioBookRepository.save(audioBook);
-                book.setAudioBook(audioBook);
+                book.setAudiobook(audiobook);
                 id = bookRepository.save(book).getId();
             }
         }
@@ -253,16 +253,16 @@ public class AdminService {
 
         if (coverImageFile != null) {
             String imagePath = saveImage(coverImageFile);
-            paperBook.setCoverImageUrl(imagePath);
+            paperBook.setCoverImagePath(imagePath);
             if (existingPaperBook != null) {
-                File fileToDelete = new File(existingPaperBook.getCoverImageUrl());
+                File fileToDelete = new File(existingPaperBook.getCoverImagePath());
                 if (fileToDelete.exists()) {
                     fileToDelete.delete();
                 }
             }
         } else if (existingPaperBook != null) {
             paperBook.setId(newPaperBookDTO.getId());
-            paperBook.setCoverImageUrl(existingPaperBook.getCoverImageUrl());
+            paperBook.setCoverImagePath(existingPaperBook.getCoverImagePath());
         } else {
             throw new ApiRequestException("Provide cover image file", HttpStatus.BAD_REQUEST);
         }
@@ -292,46 +292,46 @@ public class AdminService {
 
     public MessageResponse setEbook(
             Long id,
-            NewEBookDTO newEBookDTO,
+            NewEbookDTO newEbookDTO,
             MultipartFile coverImageFile,
             MultipartFile bookFile,
             MultipartFile previewFile
     ) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
-        EBook ebook = modelMapper.map(newEBookDTO, EBook.class);
+        Ebook ebook = modelMapper.map(newEbookDTO, Ebook.class);
 
-        EBook existingEbook = book.getEbook();
+        Ebook existingEbook = book.getEbook();
         if (existingEbook != null) {
             ebook.setId(existingEbook.getId());
         }
 
         if (coverImageFile != null) {
             String imagePath = saveImage(coverImageFile);
-            ebook.setCoverImageUrl(imagePath);
+            ebook.setCoverImagePath(imagePath);
             if (existingEbook != null) {
-                File fileToDelete = new File(existingEbook.getCoverImageUrl());
+                File fileToDelete = new File(existingEbook.getCoverImagePath());
                 if (fileToDelete.exists()) {
                     fileToDelete.delete();
                 }
             }
         } else if (existingEbook != null) {
-            ebook.setCoverImageUrl(existingEbook.getCoverImageUrl());
+            ebook.setCoverImagePath(existingEbook.getCoverImagePath());
         } else {
             throw new ApiRequestException("Provide cover image file", HttpStatus.BAD_REQUEST);
         }
 
         if (bookFile != null) {
             String bookFilePath = saveBookFile(bookFile, "ebooks", false);
-            ebook.setDownloadLink(bookFilePath);
+            ebook.setBookPath(bookFilePath);
             if (existingEbook != null) {
-                File fileToDelete = new File(existingEbook.getDownloadLink());
+                File fileToDelete = new File(existingEbook.getBookPath());
                 if (fileToDelete.exists()) {
                     fileToDelete.delete();
                 }
             }
         } else if (existingEbook != null) {
-            ebook.setDownloadLink(existingEbook.getDownloadLink());
+            ebook.setBookPath(existingEbook.getBookPath());
         } else {
             throw new ApiRequestException("Provide book file", HttpStatus.BAD_REQUEST);
         }
@@ -352,21 +352,21 @@ public class AdminService {
         }
 
         ebook.setBook(book);
-        ebook.setIsHidden(newEBookDTO.getIsHidden());
+        ebook.setIsHidden(newEbookDTO.getIsHidden());
 
         BigDecimal discountFraction;
         BigDecimal discountAmount = null;
-        BigDecimal priceWithDiscount = newEBookDTO.getPrice();
+        BigDecimal priceWithDiscount = newEbookDTO.getPrice();
 
-        if (newEBookDTO.getHasDiscount()) {
-            discountFraction = new BigDecimal(newEBookDTO.getDiscountPercentage()).divide(new BigDecimal(100));
-            discountAmount = newEBookDTO.getPrice().multiply(discountFraction);
-            priceWithDiscount = newEBookDTO.getPrice().subtract(discountAmount);
+        if (newEbookDTO.getHasDiscount()) {
+            discountFraction = new BigDecimal(newEbookDTO.getDiscountPercentage()).divide(new BigDecimal(100));
+            discountAmount = newEbookDTO.getPrice().multiply(discountFraction);
+            priceWithDiscount = newEbookDTO.getPrice().subtract(discountAmount);
         }
         ebook.setDiscountAmount(discountAmount);
         ebook.setPriceWithDiscount(priceWithDiscount);
 
-        eBookRepository.save(ebook);
+        ebookRepository.save(ebook);
         book.setEbook(ebook);
         bookRepository.save(book);
 
@@ -375,53 +375,53 @@ public class AdminService {
 
     public MessageResponse setAudiobook(
             Long id,
-            NewAudioBookDTO newAudiobookDTO,
+            NewAudiobookDTO newAudiobookDTO,
             MultipartFile coverImageFile,
             MultipartFile bookFile,
             MultipartFile previewFile
     ) {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
-        AudioBook audioBook = modelMapper.map(newAudiobookDTO, AudioBook.class);
+        Audiobook audiobook = modelMapper.map(newAudiobookDTO, Audiobook.class);
 
-        AudioBook existingAudiobook = book.getAudioBook();
+        Audiobook existingAudiobook = book.getAudiobook();
         if (existingAudiobook != null) {
-            audioBook.setId(existingAudiobook.getId());
+            audiobook.setId(existingAudiobook.getId());
         }
 
         if (coverImageFile != null) {
             String imagePath = saveImage(coverImageFile);
-            audioBook.setCoverImageUrl(imagePath);
+            audiobook.setCoverImagePath(imagePath);
             if (existingAudiobook != null) {
-                File fileToDelete = new File(existingAudiobook.getCoverImageUrl());
+                File fileToDelete = new File(existingAudiobook.getCoverImagePath());
                 if (fileToDelete.exists()) {
                     fileToDelete.delete();
                 }
             }
         } else if (existingAudiobook != null) {
-            audioBook.setCoverImageUrl(existingAudiobook.getCoverImageUrl());
+            audiobook.setCoverImagePath(existingAudiobook.getCoverImagePath());
         } else {
             throw new ApiRequestException("Provide cover image file", HttpStatus.BAD_REQUEST);
         }
 
         if (bookFile != null) {
             String bookFilePath = saveBookFile(bookFile, "audiobooks", false);
-            audioBook.setDownloadLink(bookFilePath);
+            audiobook.setBookPath(bookFilePath);
             if (existingAudiobook != null) {
-                File fileToDelete = new File(existingAudiobook.getDownloadLink());
+                File fileToDelete = new File(existingAudiobook.getBookPath());
                 if (fileToDelete.exists()) {
                     fileToDelete.delete();
                 }
             }
         } else if (existingAudiobook != null) {
-            audioBook.setDownloadLink(existingAudiobook.getDownloadLink());
+            audiobook.setBookPath(existingAudiobook.getBookPath());
         } else {
             throw new ApiRequestException("Provide book file", HttpStatus.BAD_REQUEST);
         }
 
         if (previewFile != null) {
             String previewFilePath = saveBookFile(previewFile, "audiobooks", true);
-            audioBook.setPreviewPath(previewFilePath);
+            audiobook.setPreviewPath(previewFilePath);
             if (existingAudiobook != null) {
                 File fileToDelete = new File(existingAudiobook.getPreviewPath());
                 if (fileToDelete.exists()) {
@@ -429,13 +429,13 @@ public class AdminService {
                 }
             }
         } else if (existingAudiobook != null) {
-            audioBook.setPreviewPath(existingAudiobook.getPreviewPath());
+            audiobook.setPreviewPath(existingAudiobook.getPreviewPath());
         } else {
             throw new ApiRequestException("Provide preview file", HttpStatus.BAD_REQUEST);
         }
 
-        audioBook.setBook(book);
-        audioBook.setIsHidden(newAudiobookDTO.getIsHidden());
+        audiobook.setBook(book);
+        audiobook.setIsHidden(newAudiobookDTO.getIsHidden());
 
         BigDecimal discountFraction;
         BigDecimal discountAmount = null;
@@ -446,11 +446,11 @@ public class AdminService {
             discountAmount = newAudiobookDTO.getPrice().multiply(discountFraction);
             priceWithDiscount = newAudiobookDTO.getPrice().subtract(discountAmount);
         }
-        audioBook.setDiscountAmount(discountAmount);
-        audioBook.setPriceWithDiscount(priceWithDiscount);
+        audiobook.setDiscountAmount(discountAmount);
+        audiobook.setPriceWithDiscount(priceWithDiscount);
 
-        audioBookRepository.save(audioBook);
-        book.setAudioBook(audioBook);
+        audiobookRepository.save(audiobook);
+        book.setAudiobook(audiobook);
         bookRepository.save(book);
 
         return new MessageResponse(true, "Audiobook has been successfully set to book with id " + id);

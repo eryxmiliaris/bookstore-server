@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewEBookDTO {
+public class NewAudiobookDTO {
     @NotNull
     private Boolean isHidden;
     @NotNull
@@ -23,5 +23,7 @@ public class NewEBookDTO {
     @NotNull
     private String publisher;
     @NotNull
-    private Integer numOfPages;
+    private String narrator;
+    @NotNull
+    private String durationSeconds;
 }

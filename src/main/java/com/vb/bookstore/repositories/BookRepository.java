@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface BookRepository extends JpaRepository<Book, Long> {
-    List<Book> findByPaperBooks_IsHiddenFalseOrAudioBook_IsHiddenFalseOrEbook_IsHiddenFalse();
+    List<Book> findByPaperBooks_IsHiddenFalseOrAudiobook_IsHiddenFalseOrEbook_IsHiddenFalse();
 
     @Query(value = """
         SELECT DISTINCT b.id, b.title, b.author, b.description, b.rating, b.num_of_reviews, b.publication_date 

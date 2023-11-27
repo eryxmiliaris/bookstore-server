@@ -53,10 +53,10 @@ public class BookService {
         }
         bookDTO.setPaperBooks(paperBookDTOs);
         if (!isAdmin && book.getEbook() != null && book.getEbook().getIsHidden()) {
-            bookDTO.setEBook(null);
+            bookDTO.setEbook(null);
         }
-        if (!isAdmin && book.getAudioBook() != null && book.getAudioBook().getIsHidden()) {
-            bookDTO.setAudioBook(null);
+        if (!isAdmin && book.getAudiobook() != null && book.getAudiobook().getIsHidden()) {
+            bookDTO.setAudiobook(null);
         }
 
         List<ReviewDTO> reviewDTOS = new ArrayList<>();
@@ -169,20 +169,10 @@ public class BookService {
                     if (book.getEbook() != null && (isAdmin || !book.getEbook().getIsHidden())) {
                         types.add("Ebook");
                     }
-                    if (book.getAudioBook() != null && (isAdmin || !book.getAudioBook().getIsHidden())) {
+                    if (book.getAudiobook() != null && (isAdmin || !book.getAudiobook().getIsHidden())) {
                         types.add("Audiobook");
                     }
 
-                    String coverImageUrl = null;
-
-                    if (types.contains("Paper book")) {
-                        coverImageUrl = book.getPaperBooks().get(0).getCoverImageUrl();
-                    } else if (types.contains("Ebook")) {
-                        coverImageUrl = book.getEbook().getCoverImageUrl();
-                    } else if (types.contains("Audiobook")) {
-                        coverImageUrl = book.getAudioBook().getCoverImageUrl();
-                    }
-                    bookResponse.setCoverImageUrl(coverImageUrl);
                     bookResponse.setBookTypes(types);
                     return bookResponse;
                 })
@@ -208,21 +198,21 @@ public class BookService {
                         throw new ApiRequestException("Book with id " + id + " does not have paper version", HttpStatus.BAD_REQUEST);
                     }
                 }
-                imagePath = paperBook.getCoverImageUrl();
+                imagePath = paperBook.getCoverImagePath();
             }
             case "Ebook" -> {
-                EBook ebook = book.getEbook();
+                Ebook ebook = book.getEbook();
                 if (ebook == null) {
                     throw new ApiRequestException("Given book doesn't have an ebook", HttpStatus.BAD_REQUEST);
                 }
-                imagePath = ebook.getCoverImageUrl();
+                imagePath = ebook.getCoverImagePath();
             }
             case "Audiobook" -> {
-                AudioBook audiobook = book.getAudioBook();
+                Audiobook audiobook = book.getAudiobook();
                 if (audiobook == null) {
                     throw new ApiRequestException("Given book doesn't have an audiobook", HttpStatus.BAD_REQUEST);
                 }
-                imagePath = audiobook.getCoverImageUrl();
+                imagePath = audiobook.getCoverImagePath();
             }
         }
         try {
@@ -234,7 +224,7 @@ public class BookService {
     }
 
     public List<BookMainInfoDTO> getPopularBooks() {
-        List<Book> allBooks = bookRepository.findByPaperBooks_IsHiddenFalseOrAudioBook_IsHiddenFalseOrEbook_IsHiddenFalse();
+        List<Book> allBooks = bookRepository.findByPaperBooks_IsHiddenFalseOrAudiobook_IsHiddenFalseOrEbook_IsHiddenFalse();
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
 
         Map<Book, Double> popularityMap = allBooks.stream()
@@ -290,18 +280,18 @@ public class BookService {
 
         switch (bookType) {
             case "Ebook" -> {
-                EBook ebook = book.getEbook();
+                Ebook ebook = book.getEbook();
                 if (ebook == null) {
                     throw new ApiRequestException("Given book has no ebook", HttpStatus.BAD_REQUEST);
                 }
                 filePath = Paths.get(book.getEbook().getPreviewPath());
             }
             case "Audiobook" -> {
-                AudioBook audioBook = book.getAudioBook();
-                if (audioBook == null) {
+                Audiobook audiobook = book.getAudiobook();
+                if (audiobook == null) {
                     throw new ApiRequestException("Given book has no audiobook", HttpStatus.BAD_REQUEST);
                 }
-                filePath = Paths.get(book.getAudioBook().getPreviewPath());
+                filePath = Paths.get(book.getAudiobook().getPreviewPath());
             }
         }
         Resource bookFile = new FileSystemResource(filePath);

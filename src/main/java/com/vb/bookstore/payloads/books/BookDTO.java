@@ -24,6 +24,6 @@ public class BookDTO {
     private LocalDate publicationDate;
     private List<String> categories;
     private List<PaperBookDTO> paperBooks;
-    private AudioBookDTO audioBook;
-    private EBookDTO eBook;
+    private AudiobookDTO audiobook;
+    private EbookDTO ebook;
 }

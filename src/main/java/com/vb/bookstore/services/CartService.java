@@ -123,13 +123,13 @@ public class CartService {
                 cartItem.setQuantity(1);
             }
             case "Audiobook" -> {
-                if (book.getAudioBook() == null) {
+                if (book.getAudiobook() == null) {
                     throw new ApiRequestException("Given book doesn't have an assigned audiobook", HttpStatus.NOT_FOUND);
                 }
-                cartItem.setPrice(book.getAudioBook().getPrice());
-                cartItem.setHasDiscount(book.getAudioBook().getHasDiscount());
-                cartItem.setPriceWithDiscount(book.getAudioBook().getPriceWithDiscount());
-                cartItem.setTotalPrice(book.getAudioBook().getPriceWithDiscount());
+                cartItem.setPrice(book.getAudiobook().getPrice());
+                cartItem.setHasDiscount(book.getAudiobook().getHasDiscount());
+                cartItem.setPriceWithDiscount(book.getAudiobook().getPriceWithDiscount());
+                cartItem.setTotalPrice(book.getAudiobook().getPriceWithDiscount());
                 cartItem.setQuantity(1);
             }
         }

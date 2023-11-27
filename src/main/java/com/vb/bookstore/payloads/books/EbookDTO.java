@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AudioBookDTO {
+public class EbookDTO {
     private Long id;
     private BigDecimal price;
     private Boolean hasDiscount;
@@ -21,7 +21,6 @@ public class AudioBookDTO {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime discountEndDate;
     private String publisher;
-    private String narrator;
-    private Integer durationSeconds;
+    private Integer numOfPages;
     private Boolean isHidden;
 }

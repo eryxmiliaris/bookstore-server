@@ -1,6 +1,6 @@
-package com.vb.bookstore.payloads.admin;
+package com.vb.bookstore.payloads.books;
 
-import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,19 +11,17 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class NewAudioBookDTO {
-    @NotNull
-    private Boolean isHidden;
-    @NotNull
+public class AudiobookDTO {
+    private Long id;
     private BigDecimal price;
-    @NotNull
     private Boolean hasDiscount;
+    private BigDecimal priceWithDiscount;
     private Integer discountPercentage;
+    private BigDecimal discountAmount;
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime discountEndDate;
-    @NotNull
     private String publisher;
-    @NotNull
     private String narrator;
-    @NotNull
-    private String durationSeconds;
+    private Integer durationSeconds;
+    private Boolean isHidden;
 }

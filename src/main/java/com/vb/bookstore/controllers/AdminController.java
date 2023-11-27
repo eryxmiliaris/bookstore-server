@@ -68,7 +68,7 @@ public class AdminController {
             @RequestPart MultipartFile bookFile,
             @RequestPart MultipartFile previewFile
     ) {
-        NewEBookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEBookDTO.class);
+        NewEbookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEbookDTO.class);
         validator.validate(newEbookDTO);
         MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
@@ -80,14 +80,14 @@ public class AdminController {
                     MediaType.MULTIPART_FORM_DATA_VALUE
             })
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<MessageResponse> addAudioBook(
+    public ResponseEntity<MessageResponse> addAudiobook(
             @PathVariable Long id,
             @RequestPart String newAudiobook,
             @RequestPart MultipartFile coverImageFile,
             @RequestPart MultipartFile bookFile,
             @RequestPart MultipartFile previewFile
     ) {
-        NewAudioBookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudioBookDTO.class);
+        NewAudiobookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudiobookDTO.class);
         validator.validate(newAudiobookDTO);
         MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
@@ -133,7 +133,7 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile bookFile,
             @RequestPart(required = false) MultipartFile previewFile
     ) {
-        NewEBookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEBookDTO.class);
+        NewEbookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEbookDTO.class);
         validator.validate(newEbookDTO);
         MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
@@ -152,7 +152,7 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile bookFile,
             @RequestPart(required = false) MultipartFile previewFile
     ) {
-        NewAudioBookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudioBookDTO.class);
+        NewAudiobookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudiobookDTO.class);
         validator.validate(newAudiobookDTO);
         MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
