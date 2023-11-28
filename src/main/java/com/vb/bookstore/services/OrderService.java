@@ -125,7 +125,7 @@ public class OrderService {
         cart.setPaymentStatus(null);
         cart.setPaymentId(null);
         cart.setPaymentRedirectUrl(null);
-        cart.setAddress(null);
+//        cart.setAddress(null);
         cart.setShippingMethod(null);
         orderRepository.save(order);
         cartRepository.save(cart);

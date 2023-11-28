@@ -65,9 +65,9 @@ public class Address {
     @ToString.Exclude
     private User user;
 
-    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "address")
     @ToString.Exclude
-    private List<Cart> carts;
+    private Cart cart;
 
     @Override
     public final boolean equals(Object o) {

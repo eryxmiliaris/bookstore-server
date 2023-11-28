@@ -35,8 +35,8 @@ public class Cart {
     @NotNull
     private Boolean hasPaperBooks;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "address_id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
     private Address address;
 
     @ManyToOne(fetch = FetchType.LAZY)

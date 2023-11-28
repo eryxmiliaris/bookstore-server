@@ -101,7 +101,7 @@ public class UserService {
     public List<AddressDTO> getAllAddresses() {
         User user = getCurrentUser();
 
-        List<Address> userAddresses = addressRepository.findByUser(user);
+        List<Address> userAddresses = user.getAddresses();
         List<AddressDTO> userAddressesDtos = userAddresses.stream().map((element) -> modelMapper.map(element, AddressDTO.class)).toList();
 
         return userAddressesDtos;
