@@ -28,39 +28,34 @@ public class Address {
 
     @NotBlank
     @Size(min = 3, max = 100)
-    @Column(nullable = false)
     @Pattern(regexp = "^[A-Z][a-z]*([- ][A-Z][a-z]*)*$", message = "Invalid name")
     private String userName;
 
     @NotBlank
     @Size(min = 3, max = 100)
-    @Column(nullable = false)
     @Pattern(regexp = "^[A-Z][a-z]*([- ][A-Z][a-z]*)*$", message = "Invalid surname")
     private String userSurname;
 
     @NotBlank
     @Size(min = 3, max = 100)
-    @Column(nullable = false)
     @Pattern(regexp = "^[A-Z][a-z]*([- ][A-Z][a-z]*)*$", message = "Invalid city name")
     private String city;
 
     @NotBlank
     @Size(min = 3, max = 100)
-    @Column(nullable = false)
     @Pattern(regexp = "^[A-Z][a-z]*(?:[ -][A-Z][a-z]*)*\\s\\d+[A-Za-z]*$", message = "Invalid street address")
     private String street;
 
     @NotBlank
     @Pattern(regexp = "^[0-9]{2}-[0-9]{3}$", message = "Invalid postal code (valid example: 20-501)")
-    @Column(nullable = false)
     private String postalCode;
 
     @NotBlank
     @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$", message = "Invalid phone number")
-    @Column(nullable = false)
     private String phoneNumber;
 
-    @ManyToOne
+
+    @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;

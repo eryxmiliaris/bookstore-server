@@ -1,7 +1,6 @@
 package com.vb.bookstore.controllers;
 
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.user.AddressDTO;
 import com.vb.bookstore.payloads.user.UpdateUserInfoRequest;
 import com.vb.bookstore.payloads.user.UpdateUserInfoResponse;
 import com.vb.bookstore.payloads.user.UserDTO;
@@ -14,7 +13,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -46,41 +44,5 @@ public class UserController {
         return ResponseEntity.ok()
                 .header(HttpHeaders.SET_COOKIE, updateUserInfoResponse.getJwtCookie().toString())
                 .body(updateUserInfoResponse.getMessageResponse());
-    }
-
-    @GetMapping("/addresses")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<List<AddressDTO>> getAllAddresses() {
-        List<AddressDTO> addressDTOS = userService.getAllAddresses();
-
-        return ResponseEntity.ok(addressDTOS);
-    }
-
-    @PostMapping("/addresses")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MessageResponse> addAddress(
-            @Valid
-            @RequestBody
-            AddressDTO request
-    ) {
-        MessageResponse messageResponse = userService.addAddress(request);
-        return ResponseEntity.ok(messageResponse);
-    }
-
-    @DeleteMapping("/addresses/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MessageResponse> deleteAddress(@PathVariable Long id) {
-        MessageResponse messageResponse = userService.deleteAddress(id);
-        return ResponseEntity.ok(messageResponse);
-    }
-
-    @PutMapping("/addresses/{id}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<MessageResponse> updateAddress(
-            @Valid @RequestBody AddressDTO newAddress,
-            @PathVariable Long id
-    ) {
-        MessageResponse messageResponse = userService.updateAddress(newAddress, id);
-        return ResponseEntity.ok(messageResponse);
     }
 }
