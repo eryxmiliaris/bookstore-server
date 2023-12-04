@@ -28,18 +28,16 @@ public class Audiobook {
     private Book book;
 
     @NotNull
-    @Column(nullable = false)
     private Boolean isHidden;
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false)
     private String coverImagePath;
 
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(name = "price", precision = 6, scale = 2, nullable = false)
+    @Column(name = "price", precision = 6, scale = 2)
     private BigDecimal price;
 
     @NotNull
@@ -47,7 +45,7 @@ public class Audiobook {
 
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal priceWithDiscount;
 
     @Min(value = 0)
@@ -63,12 +61,10 @@ public class Audiobook {
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String publisher;
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false)
     private String bookPath;
 
     @NotBlank
@@ -76,13 +72,11 @@ public class Audiobook {
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String narrator;
 
     @NotNull
     @Min(value = 60)
     @Max(value = 360000)
-    @Column(nullable = false)
     private Integer durationSeconds;
 
     @Override

@@ -30,21 +30,16 @@ public class User {
 
     @NotBlank
     @Size(min = 5, max = 20)
-    @Column(nullable = false)
     private String username;
 
     @NotBlank
     @Size(max = 320)
     @Email
-    @Column(nullable = false)
     private String email;
 
-    @NotNull
-    @Column(nullable = false)
     private LocalDate birthDate;
 
     @NotBlank
-    @Column(nullable = false)
     private String password;
 
     @Column(name = "reset_token")
@@ -68,7 +63,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Address> addresses;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(optional = false, mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @PrimaryKeyJoinColumn
     private Cart cart;
 

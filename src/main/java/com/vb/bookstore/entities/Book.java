@@ -59,30 +59,27 @@ public class Book {
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String title;
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String author;
 
     @NotBlank
     @Size(min = 20)
-    @Column(columnDefinition="TEXT", nullable = false)
+    @Column(columnDefinition="TEXT")
     private String description;
 
     @NotNull
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "10.00")
-    @Column(precision = 4, scale = 2, nullable = false)
+    @Column(precision = 4, scale = 2)
     private BigDecimal rating;
 
     @NotNull
     private Integer numOfReviews;
 
     @NotNull
-    @Column(nullable = false)
     private LocalDate publicationDate;
 
     public void addPaperBook(PaperBook paperBook) {

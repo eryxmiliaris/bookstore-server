@@ -28,18 +28,16 @@ public class Ebook {
     private Book book;
 
     @NotNull
-    @Column(nullable = false)
     private Boolean isHidden;
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false)
     private String coverImagePath;
 
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(name = "price", precision = 6, scale = 2, nullable = false)
+    @Column(name = "price", precision = 6, scale = 2)
     private BigDecimal price;
 
     @NotNull
@@ -48,7 +46,7 @@ public class Ebook {
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal priceWithDiscount;
 
     @Min(value = 0)
@@ -64,12 +62,10 @@ public class Ebook {
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String publisher;
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false)
     private String bookPath;
 
     @NotBlank
@@ -78,7 +74,6 @@ public class Ebook {
     @NotNull
     @Min(value = 1)
     @Max(value = 10000)
-    @Column(nullable = false)
     private Integer numOfPages;
 
     @Override

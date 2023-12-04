@@ -31,7 +31,7 @@ public class Subscription {
     @NotNull
     @DecimalMin(value = "0")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal price;
 
     private String description;

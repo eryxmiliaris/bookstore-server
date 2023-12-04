@@ -24,13 +24,15 @@ public class CartItem {
     @Column(name = "cart_item_id")
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id", nullable = false)
+    @JoinColumn(name = "cart_id")
     @ToString.Exclude
     private Cart cart;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     private Book book;
 
     @NotBlank
@@ -41,7 +43,7 @@ public class CartItem {
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal price;
 
     private Integer quantity;
@@ -52,13 +54,13 @@ public class CartItem {
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal priceWithDiscount;
 
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "99999999.99")
-    @Column(precision = 8, scale = 2, nullable = false)
+    @Column(precision = 8, scale = 2)
     private BigDecimal totalPrice;
 
     public void setQuantity(Integer quantity) {

@@ -2,6 +2,8 @@ package com.vb.bookstore.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -20,15 +22,18 @@ public class BookNote {
     private Long id;
 
     @NotBlank
+    @Size(max = 50)
     private String name;
 
     @NotBlank
+    @Size(max = 300)
     private String text;
 
     @NotBlank
     private String position;
 
-    @ManyToOne
+    @NotNull
+    @ManyToOne(optional = false)
     @JoinColumn(name = "library_item_id")
     private LibraryItem libraryItem;
 

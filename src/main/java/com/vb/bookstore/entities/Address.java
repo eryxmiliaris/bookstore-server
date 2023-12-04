@@ -2,6 +2,7 @@ package com.vb.bookstore.entities;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -54,7 +55,7 @@ public class Address {
     @Pattern(regexp = "^[\\+]?[(]?[0-9]{3}[)]?[-\\s\\.]?[0-9]{3}[-\\s\\.]?[0-9]{4,6}$", message = "Invalid phone number")
     private String phoneNumber;
 
-
+    @NotNull
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id")
     @ToString.Exclude

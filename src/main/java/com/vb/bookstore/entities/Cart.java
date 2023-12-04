@@ -46,7 +46,7 @@ public class Cart {
     @NotNull
     @DecimalMin(value = "0")
     @DecimalMax(value = "99999999.99")
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
     @NotNull

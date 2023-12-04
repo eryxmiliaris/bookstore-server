@@ -23,20 +23,22 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;
 
+    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     @ToString.Exclude
     private Book book;
 
     @NotNull
     @DecimalMin(value = "0.00")
     @DecimalMax(value = "10.00")
-    @Column(precision = 4, scale = 2, nullable = false)
+    @Column(precision = 4, scale = 2)
     private BigDecimal rating;
 
     @NotNull
@@ -44,7 +46,7 @@ public class Review {
 
     @NotBlank
     @Size(min = 20)
-    @Column(columnDefinition="TEXT", nullable = false)
+    @Column(columnDefinition="TEXT")
     private String text;
 
     @Override

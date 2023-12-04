@@ -23,23 +23,21 @@ public class PaperBook {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id", nullable = false)
+    @JoinColumn(name = "book_id")
     @ToString.Exclude
     private Book book;
 
     @NotNull
-    @Column(nullable = false)
     private Boolean isHidden;
 
     @NotBlank
     @Size(max = 255)
-    @Column(nullable = false)
     private String coverImagePath;
 
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal price;
 
     @NotNull
@@ -48,7 +46,7 @@ public class PaperBook {
     @NotNull
     @DecimalMin(value = "0.01")
     @DecimalMax(value = "9999.99")
-    @Column(precision = 6, scale = 2, nullable = false)
+    @Column(precision = 6, scale = 2)
     private BigDecimal priceWithDiscount;
 
     @Min(value = 0)
@@ -64,27 +62,22 @@ public class PaperBook {
 
     @NotBlank
     @Size(min = 5, max = 100)
-    @Column(nullable = false)
     private String publisher;
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private PaperBookCoverTypes coverType;
 
     @NotBlank
     @Size(min = 13, max = 13)
-    @Column(nullable = false)
     private String isbn;
 
     @NotNull
-    @Column(nullable = false)
     private Boolean isAvailable;
 
     @NotNull
     @Min(value = 1)
     @Max(value = 10000)
-    @Column(nullable = false)
     private Integer numOfPages;
 
     @Override

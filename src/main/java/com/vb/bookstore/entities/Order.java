@@ -29,8 +29,9 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems;
 
+
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     @ToString.Exclude
     private User user;
 
@@ -40,7 +41,7 @@ public class Order {
     @NotNull
     @DecimalMin(value = "0")
     @DecimalMax(value = "99999999.99")
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(precision = 10, scale = 2)
     private BigDecimal cartPrice;
 
     @NotNull
@@ -56,7 +57,7 @@ public class Order {
     @NotNull
     @DecimalMin(value = "0")
     @DecimalMax(value = "99999999.99")
-    @Column(precision = 10, scale = 2, nullable = false)
+    @Column(precision = 10, scale = 2)
     private BigDecimal totalPrice;
 
     @NotBlank
