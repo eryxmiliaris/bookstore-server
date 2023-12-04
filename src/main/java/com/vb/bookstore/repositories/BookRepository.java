@@ -15,7 +15,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         SELECT DISTINCT b.id, b.title, b.author, b.description, b.rating, b.num_of_reviews, b.publication_date 
             FROM books b
             LEFT JOIN category_books cb ON b.id = cb.book_id
-            LEFT JOIN categories c ON cb.category_id = c.category_id
+            LEFT JOIN categories c ON cb.category_id = c.id
             LEFT JOIN paper_books pb ON b.id = pb.book_id
             LEFT JOIN audiobooks ab ON b.id = ab.book_id
             LEFT JOIN ebooks eb ON b.id = eb.book_id
@@ -32,7 +32,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
         SELECT COUNT(DISTINCT b.id)
             FROM books b
             LEFT JOIN category_books cb ON b.id = cb.book_id
-            LEFT JOIN categories c ON cb.category_id = c.category_id
+            LEFT JOIN categories c ON cb.category_id = c.id
             LEFT JOIN paper_books pb ON b.id = pb.book_id
             LEFT JOIN audiobooks ab ON b.id = ab.book_id
             LEFT JOIN ebooks eb ON b.id = eb.book_id

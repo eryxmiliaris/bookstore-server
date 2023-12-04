@@ -8,6 +8,7 @@ import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
 import com.vb.bookstore.payloads.PageableResponse;
 import com.vb.bookstore.payloads.admin.*;
+import com.vb.bookstore.payloads.books.CategoryDTO;
 import com.vb.bookstore.payloads.books.ReviewDTO;
 import com.vb.bookstore.payloads.order.OrderDTO;
 import com.vb.bookstore.repositories.*;
@@ -96,7 +97,7 @@ public class AdminServiceImpl implements AdminService {
                 }
                 paperBook.setPublisher(newBookDTO.getPublisher());
                 paperBook.setNumOfPages(newBookDTO.getNumOfPages());
-                paperBook.setCoverType(PaperBookEnum.valueOf(newBookDTO.getCoverType()));
+                paperBook.setCoverType(newBookDTO.getCoverType());
                 paperBook.setIsbn(newBookDTO.getIsbn());
                 paperBook.setIsAvailable(newBookDTO.getIsAvailable());
                 paperBook.setBook(book);
@@ -282,7 +283,7 @@ public class AdminServiceImpl implements AdminService {
         }
         paperBook.setDiscountAmount(discountAmount);
         paperBook.setPriceWithDiscount(priceWithDiscount);
-        paperBook.setCoverType(PaperBookEnum.valueOf(newPaperBookDTO.getCoverType()));
+        paperBook.setCoverType(newPaperBookDTO.getCoverType());
 
         paperBookRepository.save(paperBook);
         book.addPaperBook(paperBook);
@@ -473,6 +474,12 @@ public class AdminServiceImpl implements AdminService {
         book.setCategories(categories);
         bookRepository.save(book);
         return new MessageResponse(true, "Book has been successfully updated");
+    }
+
+    public MessageResponse addCategory(CategoryDTO newCategoryDTO) {
+        Category category = modelMapper.map(newCategoryDTO, Category.class);
+        categoryRepository.save(category);
+        return new MessageResponse(true, "Category has been added successfully");
     }
 
     public MessageResponse addPromoCode(NewPromoCodeDTO newPromoCodeDTO) {

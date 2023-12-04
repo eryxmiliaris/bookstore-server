@@ -3,6 +3,7 @@ package com.vb.bookstore.services;
 import com.vb.bookstore.payloads.MessageResponse;
 import com.vb.bookstore.payloads.PageableResponse;
 import com.vb.bookstore.payloads.admin.*;
+import com.vb.bookstore.payloads.books.CategoryDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AdminService {
@@ -15,6 +16,8 @@ public interface AdminService {
     MessageResponse setAudiobook(Long id, NewAudiobookDTO newAudiobookDTO, MultipartFile coverImageFile, MultipartFile bookFile, MultipartFile previewFile);
 
     MessageResponse updateBook(Long id, UpdateBookDTO updateBookDTO);
+
+    MessageResponse addCategory(CategoryDTO newCategoryDTO);
 
     MessageResponse addPromoCode(NewPromoCodeDTO newPromoCodeDTO);
 

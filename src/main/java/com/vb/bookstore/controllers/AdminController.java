@@ -3,7 +3,10 @@ package com.vb.bookstore.controllers;
 import com.vb.bookstore.payloads.MessageResponse;
 import com.vb.bookstore.payloads.PageableResponse;
 import com.vb.bookstore.payloads.admin.*;
+import com.vb.bookstore.payloads.books.CategoryDTO;
 import com.vb.bookstore.services.AdminService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.RequiredArgsConstructor;
@@ -12,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Set;
 
 @RequiredArgsConstructor
 @RestController
@@ -33,7 +38,10 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewBookDTO newBookDTO = adminService.getObjectFromJson(newBook, NewBookDTO.class);
-        validator.validate(newBookDTO);
+        Set<ConstraintViolation<NewBookDTO>> violations = validator.validate(newBookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         Long id = adminService.addNewBook(newBookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(id);
     }
@@ -50,7 +58,10 @@ public class AdminController {
             @RequestPart MultipartFile coverImageFile
     ) {
         NewPaperBookDTO newPaperBookDTO = adminService.getObjectFromJson(newPaperBook, NewPaperBookDTO.class);
-        validator.validate(newPaperBookDTO);
+        Set<ConstraintViolation<NewPaperBookDTO>> violations = validator.validate(newPaperBookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setPaperBook(id, newPaperBookDTO, coverImageFile);
         return ResponseEntity.ok(messageResponse);
     }
@@ -69,7 +80,10 @@ public class AdminController {
             @RequestPart MultipartFile previewFile
     ) {
         NewEbookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEbookDTO.class);
-        validator.validate(newEbookDTO);
+        Set<ConstraintViolation<NewEbookDTO>> violations = validator.validate(newEbookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
@@ -88,7 +102,10 @@ public class AdminController {
             @RequestPart MultipartFile previewFile
     ) {
         NewAudiobookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudiobookDTO.class);
-        validator.validate(newAudiobookDTO);
+        Set<ConstraintViolation<NewAudiobookDTO>> violations = validator.validate(newAudiobookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
@@ -115,7 +132,10 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile coverImageFile
     ) {
         NewPaperBookDTO newPaperBookDTO = adminService.getObjectFromJson(newPaperBook, NewPaperBookDTO.class);
-        validator.validate(newPaperBookDTO);
+        Set<ConstraintViolation<NewPaperBookDTO>> violations = validator.validate(newPaperBookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setPaperBook(id, newPaperBookDTO, coverImageFile);
         return ResponseEntity.ok(messageResponse);
     }
@@ -134,7 +154,10 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewEbookDTO newEbookDTO = adminService.getObjectFromJson(newEbook, NewEbookDTO.class);
-        validator.validate(newEbookDTO);
+        Set<ConstraintViolation<NewEbookDTO>> violations = validator.validate(newEbookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setEbook(id, newEbookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
@@ -153,10 +176,23 @@ public class AdminController {
             @RequestPart(required = false) MultipartFile previewFile
     ) {
         NewAudiobookDTO newAudiobookDTO = adminService.getObjectFromJson(newAudiobook, NewAudiobookDTO.class);
-        validator.validate(newAudiobookDTO);
+        Set<ConstraintViolation<NewAudiobookDTO>> violations = validator.validate(newAudiobookDTO);
+        if (!violations.isEmpty()) {
+            throw new ConstraintViolationException(violations);
+        }
         MessageResponse messageResponse = adminService.setAudiobook(id, newAudiobookDTO, coverImageFile, bookFile, previewFile);
         return ResponseEntity.ok(messageResponse);
     }
+
+    @PostMapping("/categories")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<MessageResponse> addCategory(
+            @RequestBody @Valid CategoryDTO newCategoryDTO
+    ) {
+        MessageResponse messageResponse = adminService.addCategory(newCategoryDTO);
+        return ResponseEntity.ok(messageResponse);
+    }
+
 
     @PostMapping("/promoCodes")
     @PreAuthorize("hasRole('ADMIN')")

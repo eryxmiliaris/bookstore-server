@@ -1,6 +1,7 @@
 package com.vb.bookstore.payloads.books;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.vb.bookstore.entities.PaperBookCoverTypes;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,9 +23,9 @@ public class PaperBookDTO {
     @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private LocalDateTime discountEndDate;
     private String publisher;
-    private String coverType;
+    private PaperBookCoverTypes coverType;
     private String isbn;
-    private String isAvailable;
+    private Boolean isAvailable;
     private Integer numOfPages;
     private Boolean isHidden;
 }
