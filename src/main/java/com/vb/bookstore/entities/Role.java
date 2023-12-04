@@ -1,6 +1,7 @@
 package com.vb.bookstore.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
@@ -18,9 +19,10 @@ public class Role {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(length = 20)
-    private RoleEnum name;
+    private Roles name;
 
     @Override
     public final boolean equals(Object o) {

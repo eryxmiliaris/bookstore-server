@@ -125,7 +125,7 @@ public class LibraryController {
     @GetMapping("/collections")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<List<LibraryCollectionDTO>> getCollections() {
-        List<LibraryCollectionDTO> collectionDTOS = libraryService.getCollections();
+        List<LibraryCollectionDTO> collectionDTOS = collectionService.getCollections();
         return ResponseEntity.ok(collectionDTOS);
     }
 

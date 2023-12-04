@@ -34,7 +34,7 @@ public class UserController {
             @Valid
             @RequestBody
             UpdateUserInfoRequest request
-    ) throws ParseException {
+    ) {
         UpdateUserInfoResponse updateUserInfoResponse = userService.updateUserInfo(request);
 
         if (updateUserInfoResponse.getJwtCookie() == null) {

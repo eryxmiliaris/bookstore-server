@@ -70,7 +70,7 @@ public class PaperBook {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaperBookEnum coverType;
+    private PaperBookCoverTypes coverType;
 
     @NotBlank
     @Size(min = 13, max = 13)

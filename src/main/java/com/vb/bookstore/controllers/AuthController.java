@@ -2,7 +2,7 @@ package com.vb.bookstore.controllers;
 
 import com.vb.bookstore.entities.Cart;
 import com.vb.bookstore.entities.Role;
-import com.vb.bookstore.entities.RoleEnum;
+import com.vb.bookstore.entities.Roles;
 import com.vb.bookstore.entities.User;
 import com.vb.bookstore.payloads.MessageResponse;
 import com.vb.bookstore.payloads.auth.LoginRequest;
@@ -37,13 +37,14 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
     private final ModelMapper modelMapper;
-    private final RoleRepository roleRepository;
+    private final EmailService emailService;
+    private final AuthenticationManager authenticationManager;
     private final PasswordEncoder encoder;
     private final JwtUtil jwtUtil;
-    private final EmailService emailService;
+
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
 
     @PostMapping("/signin")
     public ResponseEntity<UserDTO> authenticateUser(
@@ -65,7 +66,8 @@ public class AuthController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        User user = userRepository.findByUsername(userDetails.getUsername()).orElseThrow();
+        User user = userRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new BadCredentialsException("Bad credentials"));
 
         ResponseCookie jwtCookie = jwtUtil.generateJwtCookie(userDetails);
 
@@ -99,7 +101,7 @@ public class AuthController {
         user.setPassword(encoder.encode(signUpRequest.getPassword()));
 
         Set<Role> roles = new HashSet<>();
-        Role userRole = roleRepository.findByName(RoleEnum.ROLE_USER)
+        Role userRole = roleRepository.findByName(Roles.ROLE_USER)
                 .orElseThrow(() -> new RuntimeException("Role is not found."));
         roles.add(userRole);
 

@@ -35,6 +35,7 @@ public class OrderServiceImpl implements OrderService {
     private final LibraryItemRepository libraryItemRepository;
     private final OrderItemRepository orderItemRepository;
     private final BookRepository bookRepository;
+    private final PaperBookRepository paperBookRepository;
 
     public List<OrderDTO> getOrders() {
         User user = userService.getCurrentUser();
@@ -48,6 +49,17 @@ public class OrderServiceImpl implements OrderService {
         Cart cart = user.getCart();
         if (!(cart.getTotalPrice().longValue() > 0)) {
             throw new ApiRequestException("Cart can't be empty!", HttpStatus.BAD_REQUEST);
+        }
+        if (cart.getHasPaperBooks()) {
+            for (CartItem cartItem : cart.getCartItems()) {
+                if (cartItem.getBookType().equals("Paper book")) {
+                    PaperBook pb = paperBookRepository.findById(cartItem.getPaperBookId())
+                            .orElseThrow(() -> new ResourceNotFoundException("Paper book", "id", cartItem.getPaperBookId()));
+                    if (!pb.getIsAvailable()) {
+                        throw new ApiRequestException("One of the paper books in your cart is currently not available", HttpStatus.BAD_REQUEST);
+                    }
+                }
+            }
         }
 
         String redirectUrl = createOrderPayment();

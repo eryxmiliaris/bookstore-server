@@ -1,6 +1,6 @@
 package com.vb.bookstore.entities;
 
-public enum PaperBookEnum {
+public enum PaperBookCoverTypes {
     HARDCOVER,
     PAPERBACK
 }

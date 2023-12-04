@@ -1,7 +1,7 @@
 package com.vb.bookstore.services.impl;
 
 import com.vb.bookstore.entities.Role;
-import com.vb.bookstore.entities.RoleEnum;
+import com.vb.bookstore.entities.Roles;
 import com.vb.bookstore.entities.User;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
@@ -40,8 +40,8 @@ public class UserServiceImpl implements UserService {
 
     public boolean currentUserIsAdmin() {
         boolean isAdmin = false;
-        Role adminRole = roleRepository.findByName(RoleEnum.ROLE_ADMIN)
-                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", RoleEnum.ROLE_ADMIN.toString()));
+        Role adminRole = roleRepository.findByName(Roles.ROLE_ADMIN)
+                .orElseThrow(() -> new ResourceNotFoundException("Role", "name", Roles.ROLE_ADMIN.toString()));
         try {
             User user = getCurrentUser();
             if (user.getRoles().contains(adminRole)) {

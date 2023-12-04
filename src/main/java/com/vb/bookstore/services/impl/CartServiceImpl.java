@@ -101,6 +101,9 @@ public class CartServiceImpl implements CartService {
                 if (!book.getPaperBooks().contains(pb)) {
                     throw new ApiRequestException("Paper book doesn't belong to the given book", HttpStatus.CONFLICT);
                 }
+                if (!pb.getIsAvailable()) {
+                    throw new ApiRequestException("Paper book is not available", HttpStatus.BAD_REQUEST);
+                }
                 cartItem.setPaperBookId(request.getPaperBookId());
                 cartItem.setPrice(pb.getPrice());
                 cartItem.setHasDiscount(pb.getHasDiscount());
