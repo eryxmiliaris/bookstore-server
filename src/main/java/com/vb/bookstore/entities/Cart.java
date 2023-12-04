@@ -1,5 +1,6 @@
 package com.vb.bookstore.entities;
 
+import com.vb.bookstore.config.AppConstants;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
@@ -92,7 +93,7 @@ public class Cart {
     }
 
     public void updateHasPaperBooks() {
-        setHasPaperBooks(cartItems.stream().anyMatch(cartItem -> cartItem.getBookType().equals("Paper book")));
+        setHasPaperBooks(cartItems.stream().anyMatch(cartItem -> cartItem.getBookType().equals(AppConstants.PAPER_BOOK)));
     }
 
     public void updateTotalPrice() {

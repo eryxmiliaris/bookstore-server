@@ -1,5 +1,6 @@
 package com.vb.bookstore.services.impl;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -50,7 +51,7 @@ public class WishlistServiceImpl implements WishlistService {
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", request.getBookId()));
 
-        if (!request.getBookType().equals("Paper book")) {
+        if (!request.getBookType().equals(AppConstants.PAPER_BOOK)) {
             request.setPaperBookId(null);
         }
 
@@ -59,7 +60,7 @@ public class WishlistServiceImpl implements WishlistService {
             throw new ApiRequestException("This book is already in your cart!", HttpStatus.CONFLICT);
         }
 
-        if (!request.getBookType().equals("Paper book")) {
+        if (!request.getBookType().equals(AppConstants.PAPER_BOOK)) {
             Optional<OrderItem> existingOrderItem = orderItemRepository.findByOrder_UserAndBookAndBookType(user, book, request.getBookType());
             if (existingOrderItem.isPresent()) {
                 throw new ApiRequestException("You already own this book!", HttpStatus.BAD_REQUEST);

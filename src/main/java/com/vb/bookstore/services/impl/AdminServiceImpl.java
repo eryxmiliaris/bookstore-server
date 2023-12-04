@@ -2,6 +2,7 @@ package com.vb.bookstore.services.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -81,7 +82,7 @@ public class AdminServiceImpl implements AdminService {
 
         String coverImagePath = saveImage(coverImage);
         switch (newBookDTO.getBookType()) {
-            case "Paper book" -> {
+            case AppConstants.PAPER_BOOK -> {
                 PaperBook paperBook = new PaperBook();
                 paperBook.setCoverImagePath(coverImagePath);
                 paperBook.setPrice(newBookDTO.getPrice());
@@ -106,7 +107,7 @@ public class AdminServiceImpl implements AdminService {
                 book.setPaperBooks(new ArrayList<>(List.of(paperBook)));
                 id = bookRepository.save(book).getId();
             }
-            case "Ebook" -> {
+            case AppConstants.EBOOK -> {
                 String bookPath = saveBookFile(bookFile, "ebooks", false);
                 String previewPath = saveBookFile(previewFile, "ebooks", true);
                 Ebook ebook = new Ebook();
@@ -132,7 +133,7 @@ public class AdminServiceImpl implements AdminService {
                 book.setEbook(ebook);
                 id = bookRepository.save(book).getId();
             }
-            case "Audiobook" -> {
+            case AppConstants.AUDIOBOOK -> {
                 String bookPath = saveBookFile(bookFile, "audiobooks", false);
                 String previewPath = saveBookFile(previewFile, "audiobooks", true);
                 Audiobook audiobook = new Audiobook();

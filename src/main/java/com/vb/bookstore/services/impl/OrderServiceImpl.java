@@ -1,5 +1,6 @@
 package com.vb.bookstore.services.impl;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -52,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
         }
         if (cart.getHasPaperBooks()) {
             for (CartItem cartItem : cart.getCartItems()) {
-                if (cartItem.getBookType().equals("Paper book")) {
+                if (cartItem.getBookType().equals(AppConstants.PAPER_BOOK)) {
                     PaperBook pb = paperBookRepository.findById(cartItem.getPaperBookId())
                             .orElseThrow(() -> new ResourceNotFoundException("Paper book", "id", cartItem.getPaperBookId()));
                     if (!pb.getIsAvailable()) {
@@ -78,7 +79,7 @@ public class OrderServiceImpl implements OrderService {
         order.setCartPrice(cart.getTotalPrice());
 
         List<LibraryItem> libraryItems = cart.getCartItems().stream()
-                .filter((cartItem -> !cartItem.getBookType().equals("Paper book")))
+                .filter((cartItem -> !cartItem.getBookType().equals(AppConstants.PAPER_BOOK)))
                 .map((cartItem) -> {
                     LibraryItem libraryItem = libraryItemRepository.findByUserAndBookAndBookType(user, cartItem.getBook(), cartItem.getBookType())
                             .orElse(new LibraryItem());

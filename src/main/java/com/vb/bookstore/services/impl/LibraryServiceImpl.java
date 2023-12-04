@@ -1,5 +1,6 @@
 package com.vb.bookstore.services.impl;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -49,7 +50,7 @@ public class LibraryServiceImpl implements LibraryService {
             dto.setTitle(libraryItem.getBook().getTitle());
             dto.setAuthor(libraryItem.getBook().getAuthor());
             dto.setDescription(libraryItem.getBook().getDescription());
-            if (libraryItem.getBookType().equals("Ebook")) {
+            if (libraryItem.getBookType().equals(AppConstants.EBOOK)) {
                 dto.setNumOfPages(libraryItem.getBook().getEbook().getNumOfPages());
             } else {
                 dto.setNarrator(libraryItem.getBook().getAudiobook().getNarrator());
@@ -89,7 +90,7 @@ public class LibraryServiceImpl implements LibraryService {
         libraryItemDTO.setTitle(libraryItem.getBook().getTitle());
         libraryItemDTO.setAuthor(libraryItem.getBook().getAuthor());
         libraryItemDTO.setDescription(libraryItem.getBook().getDescription());
-        if (libraryItem.getBookType().equals("Ebook")) {
+        if (libraryItem.getBookType().equals(AppConstants.EBOOK)) {
             libraryItemDTO.setNumOfPages(libraryItem.getBook().getEbook().getNumOfPages());
         } else {
             libraryItemDTO.setNarrator(libraryItem.getBook().getAudiobook().getNarrator());
@@ -121,12 +122,12 @@ public class LibraryServiceImpl implements LibraryService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", bookId));
 
         switch (bookType) {
-            case "Ebook" -> {
+            case AppConstants.EBOOK -> {
                 if (book.getEbook() == null) {
                     throw new ApiRequestException("Book has no assigned ebook", HttpStatus.BAD_REQUEST);
                 }
             }
-            case "Audiobook" -> {
+            case AppConstants.AUDIOBOOK -> {
                 if (book.getAudiobook() == null) {
                     throw new ApiRequestException("Book has no assigned audiobook", HttpStatus.BAD_REQUEST);
                 }
@@ -194,8 +195,8 @@ public class LibraryServiceImpl implements LibraryService {
 
         Path filePath = null;
         switch (libraryItem.getBookType()) {
-            case "Ebook" -> filePath = Paths.get(libraryItem.getBook().getEbook().getBookPath());
-            case "Audiobook" -> filePath = Paths.get(libraryItem.getBook().getAudiobook().getBookPath());
+            case AppConstants.EBOOK -> filePath = Paths.get(libraryItem.getBook().getEbook().getBookPath());
+            case AppConstants.AUDIOBOOK -> filePath = Paths.get(libraryItem.getBook().getAudiobook().getBookPath());
         }
         Resource bookFile = new FileSystemResource(filePath);
         if (!bookFile.exists()) {

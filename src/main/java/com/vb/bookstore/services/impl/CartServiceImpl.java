@@ -1,5 +1,6 @@
 package com.vb.bookstore.services.impl;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -76,7 +77,7 @@ public class CartServiceImpl implements CartService {
 
         checkPaymentStatus(cart);
 
-        if (!request.getBookType().equals("Paper book")) {
+        if (!request.getBookType().equals(AppConstants.PAPER_BOOK)) {
             request.setPaperBookId(null);
         }
 
@@ -85,7 +86,7 @@ public class CartServiceImpl implements CartService {
             throw new ApiRequestException("You already have this book in your cart!", HttpStatus.CONFLICT);
         }
 
-        if (!request.getBookType().equals("Paper book")) {
+        if (!request.getBookType().equals(AppConstants.PAPER_BOOK)) {
             Optional<OrderItem> existingOrderItem = orderItemRepository.findByOrder_UserAndBookAndBookType(user, book, request.getBookType());
             if (existingOrderItem.isPresent()) {
                 throw new ApiRequestException("You already own this book!", HttpStatus.BAD_REQUEST);
@@ -95,7 +96,7 @@ public class CartServiceImpl implements CartService {
         CartItem cartItem = new CartItem();
 
         switch (request.getBookType()) {
-            case "Paper book" -> {
+            case AppConstants.PAPER_BOOK -> {
                 PaperBook pb = paperBookRepository.findById(request.getPaperBookId())
                         .orElseThrow(() -> new ResourceNotFoundException("Paper book", "id", request.getPaperBookId()));
                 if (!book.getPaperBooks().contains(pb)) {
@@ -115,7 +116,7 @@ public class CartServiceImpl implements CartService {
                     cart.setAddress(user.getAddresses().get(0));
                 }
             }
-            case "Ebook" -> {
+            case AppConstants.EBOOK -> {
                 if (book.getEbook() == null) {
                     throw new ApiRequestException("Given book doesn't have an assigned ebook", HttpStatus.NOT_FOUND);
                 }
@@ -125,7 +126,7 @@ public class CartServiceImpl implements CartService {
                 cartItem.setTotalPrice(book.getEbook().getPriceWithDiscount());
                 cartItem.setQuantity(1);
             }
-            case "Audiobook" -> {
+            case AppConstants.AUDIOBOOK -> {
                 if (book.getAudiobook() == null) {
                     throw new ApiRequestException("Given book doesn't have an assigned audiobook", HttpStatus.NOT_FOUND);
                 }

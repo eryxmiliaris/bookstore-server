@@ -1,5 +1,6 @@
 package com.vb.bookstore.controllers;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.payloads.PageableResponse;
 import com.vb.bookstore.payloads.books.BookDTO;
 import com.vb.bookstore.payloads.books.BookMainInfoDTO;
@@ -25,7 +26,7 @@ public class BookController {
     @GetMapping
     public ResponseEntity<PageableResponse> getAllBooks(
             @RequestParam(name = "pageNumber", defaultValue = "0", required = false) Integer pageNumber,
-            @RequestParam(name = "pageSize", defaultValue = "12", required = false) Integer pageSize,
+            @RequestParam(name = "pageSize", defaultValue = "8", required = false) Integer pageSize,
             @RequestParam(name = "sortBy", defaultValue = "id", required = false) String sortBy,
             @RequestParam(name = "sortOrder", defaultValue = "desc", required = false) String sortOrder,
             @RequestParam(name = "priceStart", required = false) String priceStart,
@@ -64,9 +65,9 @@ public class BookController {
     ) {
         String bookType;
         if (request.getRequestURI().contains("preview.epub")) {
-            bookType = "Ebook";
+            bookType = AppConstants.EBOOK;
         } else {
-            bookType = "Audiobook";
+            bookType = AppConstants.AUDIOBOOK;
         }
         Resource book = bookService.downloadBookPreview(id, bookType);
 

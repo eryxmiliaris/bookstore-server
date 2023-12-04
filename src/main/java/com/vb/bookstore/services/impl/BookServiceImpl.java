@@ -1,5 +1,6 @@
 package com.vb.bookstore.services.impl;
 
+import com.vb.bookstore.config.AppConstants;
 import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
@@ -105,7 +106,7 @@ public class BookServiceImpl implements BookService {
         Double priceEndAB = priceEndDouble;
         if (bookTypes != null) {
             List<String> bookTypesList = Arrays.asList(bookTypes);
-            if (bookTypesList.contains("Paper book")) {
+            if (bookTypesList.contains(AppConstants.PAPER_BOOK)) {
                 priceStartPB = priceStartDouble;
                 priceEndPB = priceEndDouble;
             } else {
@@ -113,7 +114,7 @@ public class BookServiceImpl implements BookService {
                 priceEndPB = null;
             }
 
-            if (bookTypesList.contains("Ebook")) {
+            if (bookTypesList.contains(AppConstants.EBOOK)) {
                 priceStartEB = priceStartDouble;
                 priceEndEB = priceEndDouble;
             } else {
@@ -121,7 +122,7 @@ public class BookServiceImpl implements BookService {
                 priceEndEB = null;
             }
 
-            if (bookTypesList.contains("Audiobook")) {
+            if (bookTypesList.contains(AppConstants.AUDIOBOOK)) {
                 priceStartAB = priceStartDouble;
                 priceEndAB = priceEndDouble;
             } else {
@@ -164,16 +165,16 @@ public class BookServiceImpl implements BookService {
                     if (!book.getPaperBooks().isEmpty()) {
                         for (PaperBook pb : book.getPaperBooks()) {
                             if (isAdmin || !pb.getIsHidden()) {
-                                types.add("Paper book");
+                                types.add(AppConstants.PAPER_BOOK);
                                 break;
                             }
                         }
                     }
                     if (book.getEbook() != null && (isAdmin || !book.getEbook().getIsHidden())) {
-                        types.add("Ebook");
+                        types.add(AppConstants.EBOOK);
                     }
                     if (book.getAudiobook() != null && (isAdmin || !book.getAudiobook().getIsHidden())) {
-                        types.add("Audiobook");
+                        types.add(AppConstants.AUDIOBOOK);
                     }
 
                     bookResponse.setBookTypes(types);
@@ -187,7 +188,7 @@ public class BookServiceImpl implements BookService {
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", id));
         String imagePath = null;
         switch (bookType) {
-            case "Paper book" -> {
+            case AppConstants.PAPER_BOOK -> {
                 PaperBook paperBook;
                 if (paperBookId != null) {
                     paperBook = paperBookRepository.findById(paperBookId)
@@ -203,14 +204,14 @@ public class BookServiceImpl implements BookService {
                 }
                 imagePath = paperBook.getCoverImagePath();
             }
-            case "Ebook" -> {
+            case AppConstants.EBOOK -> {
                 Ebook ebook = book.getEbook();
                 if (ebook == null) {
                     throw new ApiRequestException("Given book doesn't have an ebook", HttpStatus.BAD_REQUEST);
                 }
                 imagePath = ebook.getCoverImagePath();
             }
-            case "Audiobook" -> {
+            case AppConstants.AUDIOBOOK -> {
                 Audiobook audiobook = book.getAudiobook();
                 if (audiobook == null) {
                     throw new ApiRequestException("Given book doesn't have an audiobook", HttpStatus.BAD_REQUEST);
@@ -256,7 +257,6 @@ public class BookServiceImpl implements BookService {
     }
 
     public List<BookMainInfoDTO> getRecommendedBooks() {
-        recommendationService.updateRecommendations();
         try {
             User user = userService.getCurrentUser();
             List<BookMainInfoDTO> recommendedBooks = bookStreamToBookDtoList(user.getRecommendedBooks().stream());
@@ -282,14 +282,14 @@ public class BookServiceImpl implements BookService {
         Path filePath = null;
 
         switch (bookType) {
-            case "Ebook" -> {
+            case AppConstants.EBOOK -> {
                 Ebook ebook = book.getEbook();
                 if (ebook == null) {
                     throw new ApiRequestException("Given book has no ebook", HttpStatus.BAD_REQUEST);
                 }
                 filePath = Paths.get(book.getEbook().getPreviewPath());
             }
-            case "Audiobook" -> {
+            case AppConstants.AUDIOBOOK -> {
                 Audiobook audiobook = book.getAudiobook();
                 if (audiobook == null) {
                     throw new ApiRequestException("Given book has no audiobook", HttpStatus.BAD_REQUEST);
