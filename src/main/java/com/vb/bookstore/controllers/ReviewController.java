@@ -26,6 +26,16 @@ public class ReviewController {
         return ResponseEntity.ok(messageResponse);
     }
 
+    @PutMapping("/{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<MessageResponse> updateReview(
+            @PathVariable Long id,
+            @RequestBody @Valid ReviewDTO request
+    ) {
+        MessageResponse messageResponse = reviewService.updateReview(id, request);
+        return ResponseEntity.ok(messageResponse);
+    }
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> deleteReview(

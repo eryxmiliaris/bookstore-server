@@ -6,5 +6,7 @@ import com.vb.bookstore.payloads.books.ReviewDTO;
 public interface ReviewService {
     MessageResponse addReview(Long bookId, ReviewDTO request);
 
+    MessageResponse updateReview(Long id, ReviewDTO request);
+
     MessageResponse deleteReview(Long id);
 }

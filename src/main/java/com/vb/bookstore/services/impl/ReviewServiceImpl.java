@@ -51,6 +51,21 @@ public class ReviewServiceImpl implements ReviewService {
         return new MessageResponse(true, "Review has been successfully added");
     }
 
+    public MessageResponse updateReview(Long id, ReviewDTO request) {
+        User user = userService.getCurrentUser();
+        boolean isAdmin = userService.currentUserIsAdmin();
+        Review review = reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Review", "id", id));
+        if (isAdmin || review.getUser() == user) {
+            review.setRating(request.getRating());
+            review.setText(request.getText());
+            reviewRepository.save(review);
+        } else {
+            throw new ApiRequestException("Missing access", HttpStatus.FORBIDDEN);
+        }
+        return new MessageResponse(true, "Review has been updated successfully");
+    }
+
     public MessageResponse deleteReview(Long id) {
         User user = userService.getCurrentUser();
         boolean isAdmin = userService.currentUserIsAdmin();
@@ -64,6 +79,6 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new ApiRequestException("Missing access", HttpStatus.FORBIDDEN);
         }
-        return new MessageResponse(true, "Review has been deleted");
+        return new MessageResponse(true, "Review has been deleted successfully");
     }
 }
