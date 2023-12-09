@@ -37,6 +37,7 @@ public class User {
     @Email
     private String email;
 
+    @NotNull
     private LocalDate birthDate;
 
     @NotBlank

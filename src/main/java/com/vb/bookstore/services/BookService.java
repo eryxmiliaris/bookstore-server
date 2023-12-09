@@ -31,6 +31,8 @@ public interface BookService {
 
     List<BookMainInfoDTO> getPopularBooks();
 
+    void updatePopularityScore();
+
     List<BookMainInfoDTO> getRecommendedBooks();
 
     List<CategoryDTO> getAllCategories();

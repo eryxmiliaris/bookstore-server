@@ -180,7 +180,7 @@ public class BookServiceImpl implements BookService {
                     bookResponse.setBookTypes(types);
                     return bookResponse;
                 })
-                .toList();
+                .collect(Collectors.toList());
     }
 
     public byte[] getBookCoverImage(Long id, String bookType, Long paperBookId) {
@@ -192,7 +192,7 @@ public class BookServiceImpl implements BookService {
                 PaperBook paperBook;
                 if (paperBookId != null) {
                     paperBook = paperBookRepository.findById(paperBookId)
-                            .orElseThrow(() -> new ResourceNotFoundException("Paper book", "id", id));
+                            .orElseThrow(() -> new ResourceNotFoundException("Paper book", "id", paperBookId));
                     if (paperBook.getBook() != book) {
                         throw new ApiRequestException("Invalid paper book id", HttpStatus.BAD_REQUEST);
                     }
@@ -228,45 +228,38 @@ public class BookServiceImpl implements BookService {
     }
 
     public List<BookMainInfoDTO> getPopularBooks() {
+        Page<Book> mostPopularBooks = bookRepository.findByOrderByPopularityScoreDesc(PageRequest.of(0, 20));
+
+        return bookStreamToBookDtoList(mostPopularBooks.getContent().stream());
+    }
+
+    public void updatePopularityScore() {
         List<Book> allBooks = bookRepository.findByPaperBooks_IsHiddenFalseOrAudiobook_IsHiddenFalseOrEbook_IsHiddenFalse();
         LocalDate oneWeekAgo = LocalDate.now().minusDays(7);
 
-        Map<Book, Double> popularityMap = allBooks.stream()
-                .collect(Collectors.toMap(
-                        book -> book,
-                        book -> {
-                            int numberOfOrders = orderRepository.findByOrderItems_BookAndOrderDateAfter(book, oneWeekAgo).size();
-                            int numberOfWishlists = wishlistRepository.findByBook(book).size();
+        allBooks.forEach(book -> {
+            int numberOfOrders = orderRepository.findByOrderItems_BookAndOrderDateAfter(book, oneWeekAgo).size();
+            int numberOfWishlists = wishlistRepository.findByBook(book).size();
 
-                            double orderWeight = 0.7;
-                            double wishlistWeight = 0.3;
+            double orderWeight = 0.7;
+            double wishlistWeight = 0.3;
 
-                            return (orderWeight * numberOfOrders) + (wishlistWeight * numberOfWishlists);
-                        }
-                ));
+            double popularityScore = (orderWeight * numberOfOrders) + (wishlistWeight * numberOfWishlists);
 
-        List<Book> popularBooks = popularityMap.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                .limit(16) // Adjust the limit based on your requirement
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toList());
+            book.setPopularityScore(popularityScore);
+        });
 
-        List<BookMainInfoDTO> result = bookStreamToBookDtoList(popularBooks.stream());
-
-        return result;
+        bookRepository.saveAll(allBooks);
     }
 
     public List<BookMainInfoDTO> getRecommendedBooks() {
-        try {
-            User user = userService.getCurrentUser();
-            List<BookMainInfoDTO> recommendedBooks = bookStreamToBookDtoList(user.getRecommendedBooks().stream());
-            if (recommendedBooks.size() == 0) {
-                return getPopularBooks();
-            }
-            return recommendedBooks;
-        } catch (Exception e) {
+        User user = userService.getCurrentUser();
+        List<BookMainInfoDTO> recommendedBooks = bookStreamToBookDtoList(user.getRecommendedBooks().stream());
+        if (recommendedBooks.isEmpty()) {
+            recommendedBooks = getPopularBooks();
         }
-        return getPopularBooks();
+        Collections.shuffle(recommendedBooks);
+        return recommendedBooks;
     }
 
     public List<CategoryDTO> getAllCategories() {

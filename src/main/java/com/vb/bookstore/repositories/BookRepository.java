@@ -12,7 +12,7 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<Book> findByPaperBooks_IsHiddenFalseOrAudiobook_IsHiddenFalseOrEbook_IsHiddenFalse();
 
     @Query(value = """
-        SELECT DISTINCT b.id, b.title, b.author, b.description, b.rating, b.num_of_reviews, b.publication_date 
+        SELECT DISTINCT b.id, b.title, b.author, b.description, b.rating, b.num_of_reviews, b.publication_date, b.popularity_score
             FROM books b
             LEFT JOIN category_books cb ON b.id = cb.book_id
             LEFT JOIN categories c ON cb.category_id = c.id
@@ -56,4 +56,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             Boolean includeHidden,
             Pageable pageable
     );
+
+    Page<Book> findByOrderByPopularityScoreDesc(Pageable pageable);
 }

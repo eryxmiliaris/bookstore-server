@@ -58,7 +58,7 @@ public class Book {
     private List<Review> reviews;
 
     @NotBlank
-    @Size(min = 5, max = 100)
+    @Size(min = 3, max = 100)
     private String title;
 
     @NotBlank
@@ -81,6 +81,8 @@ public class Book {
 
     @NotNull
     private LocalDate publicationDate;
+
+    private Double popularityScore;
 
     public void addPaperBook(PaperBook paperBook) {
         this.paperBooks.add(paperBook);
