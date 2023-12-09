@@ -45,6 +45,8 @@ public class AdminServiceImpl implements AdminService {
     private final PromoCodeRepository promoCodeRepository;
     private final ReviewRepository reviewRepository;
     private final OrderRepository orderRepository;
+    private final CartItemRepository cartItemRepository;
+    private final CartRepository cartRepository;
 
     public Long addNewBook(
             NewBookDTO newBookDTO,
@@ -286,6 +288,24 @@ public class AdminServiceImpl implements AdminService {
         paperBook.setPriceWithDiscount(priceWithDiscount);
         paperBook.setCoverType(newPaperBookDTO.getCoverType());
 
+        if (existingPaperBook != null) {
+            List<CartItem> cartItems = cartItemRepository.findByPaperBookIdIn(Collections.singletonList(paperBook.getId()));
+
+            Set<Cart> carts = new HashSet<>();
+            cartItems.forEach(cartItem -> carts.add(cartItem.getCart()));
+
+            cartItems.forEach(cartItem -> {
+                cartItem.setHasDiscount(paperBook.getHasDiscount());
+                cartItem.setPriceWithDiscount(paperBook.getPriceWithDiscount());
+                cartItem.setTotalPrice(paperBook.getPriceWithDiscount().multiply(BigDecimal.valueOf(cartItem.getQuantity())));
+            });
+
+            carts.forEach(Cart::updateTotalPrice);
+
+            cartRepository.saveAll(carts);
+            cartItemRepository.saveAll(cartItems);
+        }
+
         paperBookRepository.save(paperBook);
         book.addPaperBook(paperBook);
         bookRepository.save(book);
@@ -369,6 +389,24 @@ public class AdminServiceImpl implements AdminService {
         ebook.setDiscountAmount(discountAmount);
         ebook.setPriceWithDiscount(priceWithDiscount);
 
+        if (existingEbook != null) {
+            List<CartItem> cartItems = cartItemRepository.findByBookTypeAndBook_IdIn(AppConstants.EBOOK, Collections.singletonList(ebook.getId()));
+
+            Set<Cart> carts = new HashSet<>();
+            cartItems.forEach(cartItem -> carts.add(cartItem.getCart()));
+
+            cartItems.forEach(cartItem -> {
+                cartItem.setHasDiscount(ebook.getHasDiscount());
+                cartItem.setPriceWithDiscount(ebook.getPriceWithDiscount());
+                cartItem.setTotalPrice(ebook.getPriceWithDiscount());
+            });
+
+            carts.forEach(Cart::updateTotalPrice);
+
+            cartRepository.saveAll(carts);
+            cartItemRepository.saveAll(cartItems);
+        }
+
         ebookRepository.save(ebook);
         book.setEbook(ebook);
         bookRepository.save(book);
@@ -451,6 +489,24 @@ public class AdminServiceImpl implements AdminService {
         }
         audiobook.setDiscountAmount(discountAmount);
         audiobook.setPriceWithDiscount(priceWithDiscount);
+
+        if (existingAudiobook != null) {
+            List<CartItem> cartItems = cartItemRepository.findByBookTypeAndBook_IdIn(AppConstants.AUDIOBOOK, Collections.singletonList(audiobook.getId()));
+
+            Set<Cart> carts = new HashSet<>();
+            cartItems.forEach(cartItem -> carts.add(cartItem.getCart()));
+
+            cartItems.forEach(cartItem -> {
+                cartItem.setHasDiscount(audiobook.getHasDiscount());
+                cartItem.setPriceWithDiscount(audiobook.getPriceWithDiscount());
+                cartItem.setTotalPrice(audiobook.getPriceWithDiscount());
+            });
+
+            carts.forEach(Cart::updateTotalPrice);
+
+            cartRepository.saveAll(carts);
+            cartItemRepository.saveAll(cartItems);
+        }
 
         audiobookRepository.save(audiobook);
         book.setAudiobook(audiobook);
