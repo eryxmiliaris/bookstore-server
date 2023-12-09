@@ -6,7 +6,7 @@ import com.vb.bookstore.entities.User;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.PaymentDTO;
+import com.vb.bookstore.payloads.payment.PaymentDTO;
 import com.vb.bookstore.repositories.SubscriptionOrderRepository;
 import com.vb.bookstore.repositories.SubscriptionRepository;
 import com.vb.bookstore.repositories.UserRepository;

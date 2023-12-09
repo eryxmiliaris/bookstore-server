@@ -1,7 +1,7 @@
 package com.vb.bookstore.services;
 
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.PaymentDTO;
+import com.vb.bookstore.payloads.payment.PaymentDTO;
 
 import java.math.BigDecimal;
 

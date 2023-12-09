@@ -6,7 +6,7 @@ import com.paypal.orders.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.PaymentDTO;
+import com.vb.bookstore.payloads.payment.PaymentDTO;
 import com.vb.bookstore.services.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

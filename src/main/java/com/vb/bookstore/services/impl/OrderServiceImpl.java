@@ -5,7 +5,7 @@ import com.vb.bookstore.entities.*;
 import com.vb.bookstore.exceptions.ApiRequestException;
 import com.vb.bookstore.exceptions.ResourceNotFoundException;
 import com.vb.bookstore.payloads.MessageResponse;
-import com.vb.bookstore.payloads.PaymentDTO;
+import com.vb.bookstore.payloads.payment.PaymentDTO;
 import com.vb.bookstore.payloads.order.OrderDTO;
 import com.vb.bookstore.repositories.*;
 import com.vb.bookstore.services.OrderService;
@@ -74,6 +74,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         Order order = new Order();
+        order.setPaymentId(cart.getPaymentId());
         order.setUser(user);
         order.setOrderDate(LocalDate.now());
         order.setCartPrice(cart.getTotalPrice());

@@ -7,6 +7,7 @@ import com.vb.bookstore.payloads.cart.CartDTO;
 import com.vb.bookstore.payloads.cart.MoveToWishlistRequest;
 import com.vb.bookstore.payloads.cart.ShippingMethodDTO;
 import com.vb.bookstore.services.CartService;
+import com.vb.bookstore.services.PromoCodeService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class CartController {
 
     private final CartService cartService;
+    private final PromoCodeService promoCodeService;
 
     @GetMapping
     @PreAuthorize("hasRole('USER')")
@@ -65,14 +67,14 @@ public class CartController {
     @PostMapping("/promoCode")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> applyPromoCode(@RequestParam @NotBlank String promoCode) {
-        MessageResponse messageResponse = cartService.applyPromoCode(promoCode);
+        MessageResponse messageResponse = promoCodeService.applyPromoCode(promoCode);
         return ResponseEntity.ok(messageResponse);
     }
 
     @DeleteMapping("/promoCode")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<MessageResponse> removePromoCode() {
-        MessageResponse messageResponse = cartService.removePromoCode();
+        MessageResponse messageResponse = promoCodeService.removePromoCode();
         return ResponseEntity.ok(messageResponse);
     }
 

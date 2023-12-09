@@ -1,4 +1,4 @@
-package com.vb.bookstore.payloads;
+package com.vb.bookstore.payloads.payment;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

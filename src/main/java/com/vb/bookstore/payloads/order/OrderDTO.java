@@ -24,6 +24,7 @@ public class OrderDTO {
     private LocalDate shippingDate;
     private BigDecimal shippingPrice;
     private BigDecimal totalPrice;
+    private String paymentId;
     private String orderStatus;
     private String addressUserFullName;
     private String addressLocation;

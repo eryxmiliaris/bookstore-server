@@ -61,6 +61,9 @@ public class Order {
     private BigDecimal totalPrice;
 
     @NotBlank
+    private String paymentId;
+
+    @NotBlank
     private String orderStatus;
 
     private String addressUserFullName;

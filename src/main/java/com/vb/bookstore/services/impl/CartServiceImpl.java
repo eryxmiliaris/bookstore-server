@@ -39,7 +39,7 @@ public class CartServiceImpl implements CartService {
 
     public CartDTO getCart() {
         User user = userService.getCurrentUser();
-        Cart cart = cartRepository.findCartByUser(user);
+        Cart cart = user.getCart();
         CartDTO cartDTO = modelMapper.map(cart, CartDTO.class);
         cartDTO.setCartItems(cart.getCartItems().stream().
                 map((cartItem) -> {
@@ -55,7 +55,7 @@ public class CartServiceImpl implements CartService {
         return cartDTO;
     }
 
-    private void checkPaymentStatus(Cart cart) {
+    public void checkCartPaymentStatus(Cart cart) {
         if (cart.getPaymentStatus() != null) {
             MessageResponse messageResponse = paymentService.checkPaymentStatus(cart.getPaymentId());
             if (!messageResponse.isSuccess()) {
@@ -71,11 +71,11 @@ public class CartServiceImpl implements CartService {
     public MessageResponse addBookToCart(AddToCartRequest request) {
         User user = userService.getCurrentUser();
 
-        Cart cart = cartRepository.findCartByUser(user);
+        Cart cart = user.getCart();
         Book book = bookRepository.findById(request.getBookId())
                 .orElseThrow(() -> new ResourceNotFoundException("Book", "id", request.getBookId()));
 
-        checkPaymentStatus(cart);
+        checkCartPaymentStatus(cart);
 
         if (!request.getBookType().equals(AppConstants.PAPER_BOOK)) {
             request.setPaperBookId(null);
@@ -157,7 +157,7 @@ public class CartServiceImpl implements CartService {
         Cart cart = cartItem.getCart();
         User user = userService.getCurrentUser();
 
-        checkPaymentStatus(cart);
+        checkCartPaymentStatus(cart);
 
         if (user != cart.getUser()) {
             throw new ApiRequestException("Missing access", HttpStatus.FORBIDDEN);
@@ -191,7 +191,7 @@ public class CartServiceImpl implements CartService {
         User user = userService.getCurrentUser();
         Cart cart = user.getCart();
 
-        checkPaymentStatus(cart);
+        checkCartPaymentStatus(cart);
 
         CartItem cartItem = cartItemRepository.findById(request.getCartItemId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cart item", "id", request.getCartItemId()));
@@ -211,47 +211,17 @@ public class CartServiceImpl implements CartService {
         return new MessageResponse(true, "Book has been successfully moved to wishlist!");
     }
 
-    public MessageResponse applyPromoCode(String code) {
-        User user = userService.getCurrentUser();
-        Cart cart = user.getCart();
-
-        checkPaymentStatus(cart);
-
-        PromoCode promoCode = promoCodeRepository.findByCode(code)
-                .orElseThrow(() -> new ResourceNotFoundException("Promo code", "code", code));
-        if (!promoCode.getIsActive()) {
-            throw new ApiRequestException("Promo code is inactive!", HttpStatus.BAD_REQUEST);
-        }
-        if (user.getUsedPromoCodes().contains(promoCode)) {
-            throw new ApiRequestException("You have already used this promo code!", HttpStatus.CONFLICT);
-        }
-        cart.setPromoCode(promoCode);
-        cartRepository.save(cart);
-        return new MessageResponse(true, "Promo code was successfully applied!");
-    }
-
     public List<ShippingMethodDTO> getShippingMethods() {
         List<ShippingMethod> all = shippingMethodRepository.findAll();
         List<ShippingMethodDTO> shippingMethodDTOS = all.stream().map((element) -> modelMapper.map(element, ShippingMethodDTO.class)).toList();
         return shippingMethodDTOS;
     }
 
-    public MessageResponse removePromoCode() {
-        User user = userService.getCurrentUser();
-        Cart cart = user.getCart();
-
-        checkPaymentStatus(cart);
-
-        cart.setPromoCode(null);
-        cartRepository.save(cart);
-        return new MessageResponse(true, "Promo code has been successfully removed");
-    }
-
     public MessageResponse updateAddress(Long addressId) {
         User user = userService.getCurrentUser();
         Cart cart = user.getCart();
 
-        checkPaymentStatus(cart);
+        checkCartPaymentStatus(cart);
 
         Address address = addressRepository.findById(addressId)
                 .orElseThrow(() -> new ResourceNotFoundException("Address", "id", addressId));
@@ -267,7 +237,7 @@ public class CartServiceImpl implements CartService {
         User user = userService.getCurrentUser();
         Cart cart = user.getCart();
 
-        checkPaymentStatus(cart);
+        checkCartPaymentStatus(cart);
 
         ShippingMethod shippingMethod = shippingMethodRepository.findById(shippingMethodId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shipping method", "id", shippingMethodId));
