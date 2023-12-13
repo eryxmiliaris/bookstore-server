@@ -1,108 +1,148 @@
+SET @coverImagePath = 'D:\\bookstore\\src\\main\\resources\\cover.jpg';
+
+SET @bookFilePathEpub = 'D:\\bookstore\\src\\main\\resources\\book.epub';
+SET @previewFilePathEpub = 'D:\\bookstore\\src\\main\\resources\\preview.epub';
+
+SET @bookFilePathMp3 = 'D:\\bookstore\\src\\main\\resources\\book.mp3';
+SET @previewFilePathMp3 = 'D:\\bookstore\\src\\main\\resources\\preview.mp3';
+
 -- Roles
-INSERT INTO roles(name) VALUES('ROLE_USER');
-INSERT INTO roles(name) VALUES('ROLE_ADMIN');
--- Default users (login/password: [user/user, admin/admin])
-INSERT INTO users(email, password, username, reset_token) VALUES ('admin@mail.com', '$2a$12$W5KqZpjA9eFsN0IfpAGcwuSEstYQlEyiDSx4p5byMp1/sL1S3rcqW', 'admin', null);
-INSERT INTO users(email, password, username, reset_token) VALUES ('user@mail.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'user', null);
--- Set roles to users
-INSERT INTO user_roles(user_id, role_id) VALUES (1, 1);
-INSERT INTO user_roles(user_id, role_id) VALUES (1, 2);
-INSERT INTO user_roles(user_id, role_id) VALUES (2, 1);
--- Initial data for categories
-INSERT INTO `bookstore`.`categories` (`category_name`) VALUES
-("Science Fiction"),
-("Fantasy"),
-("Horror"),
-("Mystery"),
-("Adventure"),
-("Romance"),
-("Thriller"),
-("Historical Fiction"),
-("Travel"),
-("Science"),
-("Classic Literature"),
-("Non-Fiction");
--- Initial data for books
-INSERT INTO `bookstore`.`books`
-(`author`, `title`, `description`, `publication_date`, `rating`, `hidden`)
+INSERT INTO `roles`
+(`id`, `name`)
 VALUES
-("Stephen King", "The Gunslinger", "The Gunslinger is the first book in The Dark Tower series. It introduces the enigmatic Roland Deschain and his quest to reach the Dark Tower. On his journey, he encounters strange characters and a mysterious world.", '1982-06-10', 8.4, false),
-("Stephen King", "The Drawing of the Three", "The Drawing of the Three is the second book in The Dark Tower series. Roland continues his quest, drawing companions from different worlds to aid him in his journey to the Dark Tower.", '1987-02-07', 9.0, false),
-("Stephen King", "The Waste Lands", "The Waste Lands is the third book in The Dark Tower series. Roland and his companions face new challenges as they move closer to the Dark Tower, including encountering a sentient monorail.", '1991-08-15', 8.8, false),
-("Stephen King", "Wizard and Glass", "Wizard and Glass is the fourth book in The Dark Tower series. In this installment, Roland recounts a tale from his youth, a tragic love story set in the town of Hambry.", '1997-11-04', 9.2, false),
-("Stephen King", "The Wolves of the Calla", "The Wolves of the Calla is the fifth book in The Dark Tower series. Roland and his group must protect a small town from marauding wolves, while facing new mysteries and challenges.", '2003-11-04', 9.0, false),
-("Stephen King", "Song of Susannah", "Song of Susannah is the sixth book in The Dark Tower series. The group faces a crisis as Susannah's pregnancy progresses, and a malevolent force threatens their quest.", '2004-06-08', 8.8, false),
-("Stephen King", "The Dark Tower", "The Dark Tower is the seventh and final book in The Dark Tower series. Roland and his companions reach the Dark Tower itself, where the ultimate battle for the fate of the multiverse unfolds.", '2004-09-21', 9.4, false),
-("Stephen King", "The Wind Through the Keyhole", "The Wind Through the Keyhole is a supplementary novel in The Dark Tower series. It takes place between books four and five and tells a story from Roland's past.", '2012-04-24', 8.6, false),
-("J.K. Rowling", "Harry Potter and the Philosopher's Stone", "Harry Potter and the Philosopher's Stone is the first book in the Harry Potter series. It follows the young wizard Harry Potter as he discovers his magical abilities and starts his journey at Hogwarts School of Witchcraft and Wizardry.", '1997-06-26', 9.3, false),
-("J.K. Rowling", "Harry Potter and the Chamber of Secrets", "Harry Potter and the Chamber of Secrets is the second book in the Harry Potter series. Harry and his friends investigate mysterious attacks at Hogwarts, uncovering dark secrets along the way.", '1998-07-02', 9.2, false),
-("J.K. Rowling", "Harry Potter and the Prisoner of Azkaban", "Harry Potter and the Prisoner of Azkaban is the third book in the Harry Potter series. Harry learns about the dark past of Sirius Black while dealing with the dangers of the wizarding world.", '1999-07-08', 9.5, false),
-("Terry Pratchett", "The Color of Magic", "The Color of Magic is the first book in the Discworld series. It follows the misadventures of Rincewind, a hapless wizard, and Twoflower, a tourist, as they journey through a fantastical world filled with strange creatures and magic.", '1983-11-24', 8.2, false),
-("Terry Pratchett", "Mort", "Mort is the fourth book in the Discworld series. It tells the story of Mort, a young man who becomes an apprentice to Death and must navigate the responsibilities and consequences of his new role.", '1987-08-06', 8.9, false),
-("Terry Pratchett", "Guards! Guards!", "Guards! Guards! is the eighth book in the Discworld series. It introduces the Night Watch, a group of misfit city guards, as they attempt to thwart a plot to overthrow the city with the help of a dragon.", '1989-11-14', 9.1, false);
--- Initial data for category_books relation
--- Books by Stephen King
-INSERT INTO `bookstore`.`category_books` (`book_id`, `category_id`) VALUES
-(1, 2),  -- Fantasy (The Gunslinger)
-(1, 3),  -- Horror (The Gunslinger)
-(2, 2),  -- Fantasy (The Drawing of the Three)
-(2, 3),  -- Horror (The Drawing of the Three)
-(3, 2),  -- Fantasy (The Waste Lands)
-(3, 3),  -- Horror (The Waste Lands)
-(4, 2),  -- Fantasy (Wizard and Glass)
-(4, 3),  -- Horror (Wizard and Glass)
-(5, 2),  -- Fantasy (The Wolves of the Calla)
-(5, 3),  -- Horror (The Wolves of the Calla)
-(6, 2),  -- Fantasy (Song of Susannah)
-(6, 3),  -- Horror (Song of Susannah)
-(7, 2),  -- Fantasy (The Dark Tower)
-(7, 3),  -- Horror (The Dark Tower)
-(8, 2),  -- Fantasy (The Wind Through the Keyhole)
--- Books by J.K. Rowling
-(9, 2),  -- Fantasy (Harry Potter and the Philosopher's Stone)
-(9, 6),  -- Romance (Harry Potter and the Philosopher's Stone)
-(10, 2), -- Fantasy (Harry Potter and the Chamber of Secrets)
-(10, 6), -- Romance (Harry Potter and the Chamber of Secrets)
-(11, 2), -- Fantasy (Harry Potter and the Prisoner of Azkaban)
-(11, 6), -- Romance (Harry Potter and the Prisoner of Azkaban)
--- Books by Terry Pratchett
-(12, 2), -- Fantasy (The Color of Magic)
-(13, 2), -- Fantasy (Mort)
-(14, 2), -- Fantasy (Guards! Guards!)
-(14, 7); -- Adventure (Guards! Guards!)
--- Initial data for paper books
-INSERT INTO `bookstore`.`paper_books`
-(`cover_image_url`, `cover_type`, `is_available`, `isbn`, `num_of_pages`, `price`, `publisher`, `book_id`)
+(1, 'ROLE_USER'),
+(2, 'ROLE_ADMIN');
+
+-- Default users (login/password: [admin/admin, usersub/user, usernosub/user])
+INSERT INTO `users`
+(`id`, `email`, `password`, `username`, `birth_date`, `has_active_subscription`, `active_subscription_end_date`)
 VALUES
-('', 'HARDCOVER', true, '9781982127802', 300, 25.99, 'Penguin Random House', 1),
-('', 'PAPERBACK', true, '9781982127819', 400, 15.99, 'Scholastic', 2),
-('', 'HARDCOVER', true, '9781982127826', 350, 28.99, 'HarperCollins', 3),
-('', 'PAPERBACK', true, '9781982127871', 350, 18.99, 'Simon & Schuster', 8),
-('', 'HARDCOVER', true, '9781982127888', 320, 29.99, 'Penguin Random House', 9),
-('', 'PAPERBACK', true, '9781982127918', 480, 20.99, 'Scholastic', 12),
-('', 'PAPERBACK', true, '9781982127932', 430, 19.99, 'Scholastic', 14),
-('', 'PAPERBACK', true, '9781982127949', 250, 12.99, 'Simon & Schuster', 4),
-('', 'HARDCOVER', true, '9781982127956', 320, 29.99, 'HarperCollins', 5);
--- Initial data for ebooks
-INSERT INTO `bookstore`.`ebooks`
-(`book_id`, `cover_image_url`, `price`, `publisher`, `num_of_pages`, `download_link`)
+(1, 'admin@admin.com', '$2a$12$W5KqZpjA9eFsN0IfpAGcwuSEstYQlEyiDSx4p5byMp1/sL1S3rcqW', 'admin', '1854-12-21', false, null),
+(2, 'usersub@test.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'usersub', '1995-03-20', true, '2030-01-01'),
+(3, 'usernosub@test.com', '$2a$12$2kbPfMpUq9SUiyWdCqw/bORYivH.fg5OszFl3Ho9isEbqgbPvs1Nm', 'usernosub', '1995-03-20', false, null);
+
+-- Assign roles to users
+INSERT INTO `user_roles`
+(user_id, role_id)
+VALUES (1, 1),
+(1, 2),
+(2, 1),
+(3, 1);
+
+-- Shipping methods
+INSERT INTO `shipping_methods`
+(`duration_days`, `name`, `price`)
 VALUES
-(1, '', 9.99, 'Penguin Random House', 300, ''),
-(2, '', 8.49, 'Scholastic', 400, ''),
-(3, '', 7.99, 'HarperCollins', 250, ''),
-(4, '', 6.99, 'Simon & Schuster', 350, ''),
-(6, '', 4.99, 'HarperCollins', 200, ''),
-(13, '', 10.99, 'HarperCollins', 380, ''),
-(5, '', 5.99, 'Penguin Random House', 420, '');
--- Initial data for audiobooks
-INSERT INTO `bookstore`.`audio_books`
-(`book_id`, `cover_image_url`, `price`, `publisher`, `duration_seconds`, `narrator`, `download_link`)
+(3, "Post service ABC", 12.99),
+(2, "Post service XYZ", 16.99);
+
+-- Addresses
+INSERT INTO `bookstore`.`addresses`
+(`id`, `city`, `name`, `phone_number`, `postal_code`, `street`, `user_name`, `user_surname`, `user_id`)
 VALUES
-(1, '', 19.99, 'Penguin Random House', 7200, 'John Smith', ''),
-(2, '', 18.49, 'Scholastic', 8400, 'Emily Johnson', ''),
-(3, '', 17.99, 'HarperCollins', 6000, 'Michael Williams', ''),
-(4, '', 16.99, 'Simon & Schuster', 7800, 'Sarah Davis', ''),
-(7, '', 19.99, 'Simon & Schuster', 8300, 'Sarah Davis', ''),
-(10, '', 14.49, 'ABC Books', 7200, 'Laura Johnson', ''),
-(11, '', 12.99, 'XYZ Publishing', 9000, 'Michael Clark', ''),
-(5, '', 15.99, 'Penguin Random House', 6600, 'David Miller', '');
+(1, 'Admin City', 'Admin\'s house', '123123123', '20-501', 'Admin Street 12', 'Admin', 'Adminius', 1),
+(2, 'Subscriber City', 'Subscriber\'s house', '123123123', '20-501', 'Subscriber Street 12', 'Subscriber', 'Subscriberus', 2),
+(3, 'User City', 'User\'s house', '123123123', '20-501', 'User Street 12', 'User', 'Userius', 3);
+
+-- Carts
+INSERT INTO `carts`
+(`user_id`, `has_paper_books`, `has_promo_code`, `payment_id`, `payment_redirect_url`, `payment_status`, `total_price`, `total_price_with_promo_code`, `address_id`, `promo_code_id`, `shipping_method_id`)
+VALUES
+(1, false, false, null, null, null, 0, 0, null, null, null),
+(2, false, false, null, null, null, 0, 0, null, null, null),
+(3, false, false, null, null, null, 0, 0, null, null, null);
+
+-- Books
+INSERT INTO `books`
+(`id`, `author`, `description`, `num_of_reviews`, `publication_date`, `rating`, `title`)
+VALUES
+(1, 'Jane Austen', 'A classic novel about love and social class.', 0, '1813-01-28', 0, 'Pride and Prejudice'),
+(2, 'Frank Herbert', 'Epic science fiction set in a desert world.', 0, '1965-08-01', 0, 'Dune'),
+(3, 'Stieg Larsson', 'A gripping mystery involving a journalist and a hacker.', 0, '2005-08-01', 0, 'The Girl with the Dragon Tattoo'),
+(4, 'Harper Lee', 'A poignant exploration of racial injustice in the American South.', 0, '1960-07-11', 0, 'To Kill a Mockingbird'),
+(5, 'George Orwell', 'A dystopian classic exploring the dangers of totalitarianism.', 0, '1949-06-08', 0, '1984'),
+(6, 'J.R.R. Tolkien', 'A fantasy adventure about a hobbit on a quest.', 0, '1937-09-21', 0, 'The Hobbit'),
+(7, 'Gillian Flynn', 'A psychological thriller about a woman\'s mysterious disappearance.', 0, '2012-05-24', 0, 'Gone Girl'),
+(8, 'Dan Brown', 'A gripping mystery involving symbols, codes, and conspiracy.', 0, '2003-03-18', 0, 'The Da Vinci Code'),
+(9, 'Siddhartha Mukherjee', 'An intimate history of the gene and its impact on medicine and society.', 0, '2016-05-17', 0, 'The Gene: An Intimate History'),
+(10, 'Stephen R. Covey', 'A guide to personal and professional effectiveness.', 0, '1989-08-15', 0, 'The 7 Habits of Highly Effective People');
+
+-- Categories
+INSERT INTO `categories`
+(`id`, `category_name`)
+VALUES
+(1, 'Classic Literature'),
+(2, 'Science Fiction'),
+(3, 'Thriller'),
+(5, 'Romance'),
+(7, 'Science'),
+(10, 'Motivational');
+
+-- Assign books to categories
+INSERT INTO `category_books`
+(`book_id`, `category_id`)
+VALUES
+(1, 1),
+(2, 2),
+(3, 3),
+(4, 1),
+(5, 2),
+(6, 2),
+(9, 7),
+(4, 5),
+(5, 3),
+(6, 3),
+(9, 5),
+(7, 3),
+(7, 5),
+(8, 5),
+(8, 3),
+(10, 10);
+
+-- Paper books
+INSERT INTO `paper_books`
+(`paper_book_id`, `cover_image_path`, `cover_type`, `discount_amount`, `discount_end_date`, `discount_percentage`, `has_discount`, `is_available`, `is_hidden`, `isbn`, `num_of_pages`, `price`, `price_with_discount`, `publisher`, `book_id`)
+VALUES
+(1, @coverImagePath, 'HARDCOVER', 2.00, '2023-12-31', 10, 1, 1, 0, '9781234567890', 400, 19.99, 17.99, 'Classic Books Publishing', 1),
+(2, @coverImagePath, 'PAPERBACK', null, null, null, 0, 1, 0, '9780987654321', 600, 24.99, 24.99, 'Sci-Fi Press', 2),
+(3, @coverImagePath, 'HARDCOVER', 3.00, '2023-12-31', 15, 1, 1, 0, '9780876543210', 450, 21.99, 18.99, 'Mystery Publications', 3),
+(11, @coverImagePath, 'HARDCOVER', null, null, null, 0, 0, 0, '9781234567891', 200, 9.99, 9.99, 'New Books Publishing', 1),
+(12, @coverImagePath, 'PAPERBACK', null, null, null, 0, 0, 0, '9781234567892', 250, 11.99, 11.99, 'Unavailable Books Co.', 2),
+(13, @coverImagePath, 'HARDCOVER', null, null, null, 0, 0, 0, '9781234567893', 180, 8.99, 8.99, 'New Books Publishing', 3),
+(4, @coverImagePath, 'PAPERBACK', null, null, null, 0, 1, 0, '9780111122223', 350, 12.99, 12.99, 'Classic Books Publishing', 4),
+(5, @coverImagePath, 'HARDCOVER', null, null, null, 0, 1, 0, '9780333344445', 300, 15.99, 15.99, 'Dystopian Books Inc.', 5),
+(6, @coverImagePath, 'PAPERBACK', null, null, null, 0, 1, 0, '9780555566667', 400, 17.99, 17.99, 'Fantasy Publications', 6),
+(7, @coverImagePath, 'PAPERBACK', null, null, null, 0, 1, 0, '9780987654322', 400, 14.99, 14.99, 'Mystery Publications', 7),
+(8, @coverImagePath, 'HARDCOVER', null, null, null, 0, 1, 0, '9780876543211', 450, 21.99, 21.99, 'Mystery Publications', 8),
+(9, @coverImagePath, 'HARDCOVER', null, null, null, 0, 1, 0, '9780999988887', 500, 24.99, 24.99, 'Scientific Books Co.', 9),
+(10, @coverImagePath, 'PAPERBACK', null, null, null, 0, 1, 0, '9780765432109', 300, 14.99, 14.99, 'Self-Help Books Co.', 10);
+
+-- Ebooks
+INSERT INTO `ebooks`
+(`book_id`, `book_path`, `cover_image_path`, `discount_amount`, `discount_end_date`, `discount_percentage`, `has_discount`, `is_hidden`, `num_of_pages`, `preview_path`, `price`, `price_with_discount`, `publisher`)
+VALUES
+(2, @bookFilePathEpub, @coverImagePath, 1.50, '2023-12-31', 5, 1, 0, 600, @previewFilePathEpub, 12.99, 11.49, 'Sci-Fi Press'),
+(3, @bookFilePathEpub, @coverImagePath, 3.00, '2023-12-31', 15, 1, 0, 450, @previewFilePathEpub, 14.99, 12.99, 'Mystery Publications'),
+(5, @bookFilePathEpub, @coverImagePath, null, null, null, 0, 0, 300, @previewFilePathEpub, 10.99, 10.99, 'Dystopian Books Inc.'),
+(6, @bookFilePathEpub, @coverImagePath, null, null, null, 0, 0, 400, @previewFilePathEpub, 9.99, 9.99, 'Fantasy Publications'),
+(7, @bookFilePathEpub, @coverImagePath, null, null, null, 0, 0, 400, @previewFilePathEpub, 11.99, 11.99, 'Mystery Publications'),
+(9, @bookFilePathEpub, @coverImagePath, null, null, null, 0, 0, 500, @previewFilePathEpub, 15.99, 15.99, 'Scientific Books Co.');
+
+-- Audiobooks
+INSERT INTO `audiobooks`
+(`book_id`, `book_path`, `cover_image_path`, `discount_amount`, `discount_end_date`, `discount_percentage`, `duration_seconds`, `has_discount`, `is_hidden`, `narrator`, `preview_path`, `price`, `price_with_discount`, `publisher`)
+VALUES
+(1, @bookFilePathMp3, @coverImagePath, 2.00, '2023-12-31', 10, 18000, 1, 0, 'Emma Thompson', @previewFilePathMp3, 24.99, 22.49, 'Classic Books Publishing'),
+(4, @bookFilePathMp3, @coverImagePath, 1.00, '2023-12-31', 5, 15000, 1, 0, 'Sissy Spacek', @previewFilePathMp3, 18.99, 17.49, 'Classic Books Publishing'),
+(6, @bookFilePathMp3, @coverImagePath, null, null, null, 12000, 0, 0, 'Andy Serkis', @previewFilePathMp3, 21.99, 21.99, 'Fantasy Publications'),
+(8, @bookFilePathMp3, @coverImagePath, null, null, null, 20000, 0, 0, 'Tom Hanks', @previewFilePathMp3, 27.99, 27.99, 'Mystery Publications'),
+(10, @bookFilePathMp3, @coverImagePath, null, null, null, 30000, 0, 0, 'Stephen R. Covey', @previewFilePathMp3, 19.99, 19.99, 'Self-Help Books Co.'),
+(3, @bookFilePathMp3, @coverImagePath, 3.00, '2023-12-31', 15, 21000, 1, 0, 'Simon Vance', @previewFilePathMp3, 23.99, 21.49, 'Mystery Publications');
+
+-- Subscriptions
+INSERT INTO `subscriptions`
+(`id`, `description`, `duration_days`, `name`, `price`)
+VALUES
+(1, 'Ideal for those who enjoy trying out new titles and want the flexibility to adjust their reading choices frequently.', 30, 'Monthly Subscription', 39.99),
+(2, 'Perfect for readers committed to exploring a diverse range of genres over an extended period while enjoying a cost-effective plan.', 180, 'Half-Year Subscription', 199.99),
+(3, 'Our best value option for the avid reader, granting a full year of uninterrupted access to our entire library at a significant discount.', 365, 'Annual Subscription', 399.99);

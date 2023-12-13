@@ -68,6 +68,8 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
+//        Uncomment to activate paypal system
+
 //        String redirectUrl = createOrderPayment();
 //
 //        MessageResponse messageResponse = paymentService.captureOrder(cart.getPaymentId());
