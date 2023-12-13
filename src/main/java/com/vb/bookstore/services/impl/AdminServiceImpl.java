@@ -109,7 +109,6 @@ public class AdminServiceImpl implements AdminService {
                 paperBook.setIsAvailable(newBookDTO.getIsAvailable());
                 paperBook.setBook(book);
                 paperBook.setIsHidden(newBookDTO.getIsHidden());
-//                paperBookRepository.save(paperBook);
                 book.setPaperBooks(new ArrayList<>(List.of(paperBook)));
                 id = bookRepository.save(book).getId();
             }
@@ -135,7 +134,6 @@ public class AdminServiceImpl implements AdminService {
                 ebook.setNumOfPages(newBookDTO.getNumOfPages());
                 ebook.setBook(book);
                 ebook.setIsHidden(newBookDTO.getIsHidden());
-//                eBookRepository.save(ebook);
                 book.setEbook(ebook);
                 id = bookRepository.save(book).getId();
             }
@@ -162,7 +160,6 @@ public class AdminServiceImpl implements AdminService {
                 audiobook.setDurationSeconds(newBookDTO.getDurationSeconds());
                 audiobook.setBook(book);
                 audiobook.setIsHidden(newBookDTO.getIsHidden());
-//                audioBookRepository.save(audioBook);
                 book.setAudiobook(audiobook);
                 id = bookRepository.save(book).getId();
             }

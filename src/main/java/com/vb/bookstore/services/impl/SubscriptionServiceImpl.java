@@ -14,6 +14,7 @@ import com.vb.bookstore.services.PaymentService;
 import com.vb.bookstore.services.SubscriptionService;
 import com.vb.bookstore.services.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,9 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class SubscriptionServiceImpl implements SubscriptionService {
+
+    @Value("${bookstore.client.base.url}")
+    private String BASE_URL;
 
     private final UserService userService;
     private final PaymentService paymentService;
@@ -47,7 +51,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
         SubscriptionOrder subscriptionOrder = subscriptionOrderRepository.findByUserAndPaymentStatus(user, "processing");
 
         if (subscriptionOrder == null) {
-            PaymentDTO payment = paymentService.createPayment(subscription.getPrice(), "http://localhost:5173/subscriptions?orderState=paymentSuccess", "http://localhost:5173/subscriptions");
+            PaymentDTO payment = paymentService.createPayment(subscription.getPrice(), BASE_URL + "/subscriptions?orderState=paymentSuccess", BASE_URL + "/subscriptions");
 
             subscriptionOrder = new SubscriptionOrder();
             subscriptionOrder.setUser(user);
@@ -83,7 +87,7 @@ public class SubscriptionServiceImpl implements SubscriptionService {
             if (subscriptionOrder.getSubscription() == subscription) {
                 return new MessageResponse(true, subscriptionOrder.getPaymentRedirectUrl());
             } else {
-                PaymentDTO payment = paymentService.createPayment(subscription.getPrice(), "http://localhost:5173/subscriptions?orderState=paymentSuccess", "http://localhost:5173/subscriptions");
+                PaymentDTO payment = paymentService.createPayment(subscription.getPrice(), BASE_URL + "/subscriptions?orderState=paymentSuccess", BASE_URL + "/subscriptions");
                 subscriptionOrder.setSubscription(subscription);
                 subscriptionOrder.setPaymentId(payment.getPaymentId());
                 subscriptionOrder.setPaymentStatus("processing");

@@ -17,6 +17,7 @@ import com.vb.bookstore.services.EmailService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
@@ -37,6 +38,10 @@ import java.util.*;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+
+    @Value("${bookstore.client.base.url}")
+    private String BASE_URL;
+
     private final ModelMapper modelMapper;
     private final EmailService emailService;
     private final AuthenticationManager authenticationManager;
@@ -143,7 +148,7 @@ public class AuthController {
         user.setResetToken(resetToken);
         userRepository.save(user);
 
-        emailService.sendSimpleMail(email, "To reset your password, click the link below: \n" + "http://localhost:5173/reset?token=" + resetToken, "Password Reset Request");
+        emailService.sendSimpleMail(email, "To reset your password, click the link below: \n" + BASE_URL + "/reset?token=" + resetToken, "Password Reset Request");
         return ResponseEntity.ok()
                 .body(new MessageResponse(true, "A password reset link has been sent to: " + email));
     }

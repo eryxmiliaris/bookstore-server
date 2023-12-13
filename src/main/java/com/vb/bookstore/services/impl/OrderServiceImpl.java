@@ -68,18 +68,18 @@ public class OrderServiceImpl implements OrderService {
             }
         }
 
-        String redirectUrl = createOrderPayment();
-
-        MessageResponse messageResponse = paymentService.captureOrder(cart.getPaymentId());
-        if (messageResponse.isSuccess()) {
-            cart.setPaymentStatus("completed");
-        } else {
-            messageResponse.setMessage(redirectUrl);
-            return messageResponse;
-        }
+//        String redirectUrl = createOrderPayment();
+//
+//        MessageResponse messageResponse = paymentService.captureOrder(cart.getPaymentId());
+//        if (messageResponse.isSuccess()) {
+//            cart.setPaymentStatus("completed");
+//        } else {
+//            messageResponse.setMessage(redirectUrl);
+//            return messageResponse;
+//        }
 
         Order order = new Order();
-        order.setPaymentId(cart.getPaymentId());
+        order.setPaymentId(cart.getPaymentId() == null ? "TEST" : cart.getPaymentId());
         order.setUser(user);
         order.setOrderDate(LocalDate.now());
         order.setCartPrice(cart.getTotalPrice());
@@ -146,7 +146,6 @@ public class OrderServiceImpl implements OrderService {
         cart.setPaymentStatus(null);
         cart.setPaymentId(null);
         cart.setPaymentRedirectUrl(null);
-//        cart.setAddress(null);
         cart.setShippingMethod(null);
         orderRepository.save(order);
         cartRepository.save(cart);
