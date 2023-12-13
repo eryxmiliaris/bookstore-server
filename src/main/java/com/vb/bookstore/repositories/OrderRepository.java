@@ -12,10 +12,7 @@ import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findByOrderItems_BookAndOrderDateAfter(Book book, LocalDate orderDate);
-    List<Order> findByOrderItems_Book(Book book);
     List<Order> findByUserOrderByIdDesc(User user);
-
     Page<Order> findById(Long id, Pageable pageable);
-
     Page<Order> findAllByOrderByIdDesc(Pageable pageDetails);
 }

@@ -16,6 +16,7 @@ import com.vb.bookstore.repositories.*;
 import com.vb.bookstore.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +48,9 @@ public class AdminServiceImpl implements AdminService {
     private final OrderRepository orderRepository;
     private final CartItemRepository cartItemRepository;
     private final CartRepository cartRepository;
+
+    @Value("${bookstore.file.directory}")
+    private String baseDirectory;
 
     public Long addNewBook(
             NewBookDTO newBookDTO,
@@ -167,7 +171,7 @@ public class AdminServiceImpl implements AdminService {
     }
 
     private String saveBookFile(MultipartFile file, String bookType, boolean preview) {
-        final String directoryPath = "D:\\book_store\\" + (preview ? "previews\\" : "") + bookType + "\\";
+        final String directoryPath = baseDirectory + (preview ? "previews\\" : "") + bookType + "\\";
 
         if (file == null || file.isEmpty()) {
             throw new ApiRequestException("Cannot save an empty file", HttpStatus.BAD_REQUEST);
@@ -208,7 +212,7 @@ public class AdminServiceImpl implements AdminService {
 
 
     private String saveImage(MultipartFile file) {
-        final String directoryPath = "D:\\book_store\\cover_images\\";
+        final String directoryPath = baseDirectory + "cover_images\\";
 
         if (file == null || file.isEmpty()) {
             throw new ApiRequestException("Cannot save an empty file", HttpStatus.BAD_REQUEST);

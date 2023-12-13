@@ -12,6 +12,5 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
     Optional<OrderItem> findByOrder_UserAndBookAndBookType(User user, Book book, String bookType);
     boolean existsByOrder_UserAndBook(User user, Book book);
     Optional<List<OrderItem>> findByOrder_UserAndBook(User user, Book book);
-
     List<OrderItem> findByOrder_User(User user);
 }

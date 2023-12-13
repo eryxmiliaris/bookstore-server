@@ -13,6 +13,7 @@ import com.vb.bookstore.services.PaymentService;
 import com.vb.bookstore.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
+
+    @Value("${bookstore.client.base.url}")
+    private String BASE_URL;
+
     private final ModelMapper modelMapper;
 
     private final UserService userService;
@@ -170,8 +175,8 @@ public class OrderServiceImpl implements OrderService {
         }
 
         PaymentDTO payment = paymentService.createPayment(fee,
-                "http://localhost:5173/profile/cart?orderState=paymentSuccess",
-                "http://localhost:5173/profile/cart");
+                BASE_URL + "/profile/cart?orderState=paymentSuccess",
+                BASE_URL + "/profile/cart");
 
         cart.setPaymentId(payment.getPaymentId());
         cart.setPaymentRedirectUrl(payment.getRedirectUrl());
