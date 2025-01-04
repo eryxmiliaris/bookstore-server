@@ -67,6 +67,8 @@ public class WebSecurityConfig {
                                 .requestMatchers("/api/orders/**").permitAll()
                                 .requestMatchers("/api/library/**").permitAll()
                                 .requestMatchers("/api/subscriptions/**").permitAll()
+                                .requestMatchers("/api-docs").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
