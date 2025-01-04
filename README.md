@@ -95,7 +95,7 @@ This repository contains the server-side implementation of a **Bookstore Web App
 | **Role**       | **Login**     | **Password** |  
 |-----------------|---------------|--------------|  
 | Admin          | `admin`       | `admin`      |  
-| User With Subscrition | `usersub`     | `user`       |  
+| User With Subscription | `usersub`     | `user`       |  
 | Regular User    | `usernosub`   | `user`       |  
 
 ---
